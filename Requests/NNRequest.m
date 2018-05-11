@@ -11,11 +11,26 @@
 #import "AFHTTPSessionManager+RACSignal.h"
 #import "NNRequest.h"
 
+@interface NNRequest ()
+
+@property (nonatomic) NNHttpMethod method;
+@property (nonatomic) NSString *urlPath;
+
+@property (nonatomic) NSMutableDictionary *parameters;
+@property (nonatomic) NSMutableDictionary *headers;
+@property (nonatomic) NSMutableDictionary *files;
+
+@property (nonatomic) NSData *body;
+@property (nonatomic) void (^bodyBlock)(id<AFMultipartFormData>);
+
+@end
+
 @implementation NNRequest
 
 - (instancetype)initWithMethod:(NNHttpMethod)method urlPath:(NSString *)urlPath {
     if (self = [super init]) {
         _parameters = [NSMutableDictionary new];
+        _headers = [NSMutableDictionary new];
         _files = [NSMutableDictionary new];
         _method = method;
         _urlPath = urlPath;
@@ -31,47 +46,90 @@
     return [[self alloc] initWithMethod:POST urlPath:urlPath];
 }
 
-- (NNRequest *)addFile:(NSString *)key mime:(NSString *)mime data:(NSData *)data {
-    return self;
++ (instancetype)PUT:(NSString *)urlPath {
+    return [[self alloc] initWithMethod:PUT urlPath:urlPath];
 }
 
-- (NNRequest *)addParam:(NSString *)key value:(NSString *)value {
-    return self;
++ (instancetype)DELETE:(NSString *)urlPath {
+    return [[self alloc] initWithMethod:DELETE urlPath:urlPath];
 }
 
-- (NNRequest *)addRawBody:(NSData *)body {
-    return self;
-}
-
-- (NNRequest *)addJsonBody:(id)body {
-    return self;
-}
-
-- (NNRequest *)addHeader:(NSString *)key value:(NSString *)value {
-    return self;
++ (instancetype)HEAD:(NSString *)urlPath {
+    return [[self alloc] initWithMethod:HEAD urlPath:urlPath];
 }
 
 static id (^gAdapter)(id input);
++ (id (^)(id))adapter {
+    return gAdapter;
+}
+
 + (void)setAdapter:(id (^)(id))adapter {
     gAdapter = adapter;
 }
 
 static AFHTTPSessionManager *gManager;
-+ (void)setHTTPSessionManager:(AFHTTPSessionManager *)manager {
++ (AFHTTPSessionManager *)manager {
+    return gManager;
+}
+
++ (void)setManager:(AFHTTPSessionManager *)manager {
     gManager = manager;
+}
+
+- (NNRequest *)multipartBody:(void (^)(id<AFMultipartFormData>))block {
+    NSAssert([_parameters count] == 0, @"multipart 格式下的参数一律用 AFMultipartFormData 添加");
+    NSAssert(_body == nil, @"multipart 格式下不可指定 body");
+    _bodyBlock = block;
+    return self;
+}
+
+- (NNRequest *)parameters:(NSDictionary *)parameters {
+    [_parameters addEntriesFromDictionary:parameters];
+    return self;
+}
+
+- (NNRequest *)parameter:(NSString *)key value:(NSString *)value {
+    _parameters[key] = value;
+    return self;
+}
+
+- (NNRequest *)rawBody:(NSData *)body {
+    _body = body;
+    return self;
+}
+
+- (NNRequest *)jsonBody:(id)body {
+    NSError *error = nil;
+    _body = [NSJSONSerialization dataWithJSONObject:body options:0 error:&error];
+    NSAssert(error == nil, @"WTF");
+    return self;
+}
+
+- (NNRequest *)headers:(NSDictionary *)headers {
+    [_headers addEntriesFromDictionary:headers];
+    return self;
+}
+
+- (NNRequest *)header:(NSString *)key value:(NSString *)value {
+    _headers[key] = value;
+    return self;
 }
 
 - (RACSignal *)send {
     RACSignal *fetch = nil;
-    switch (_method) {
-        case GET:
-            fetch = [gManager GET:_urlPath parameters:_parameters];
-            break;
-        case POST:
-            fetch = [gManager POST:_urlPath parameters:_parameters];
-            break;
-        default:
-            break;
+    if (_bodyBlock) {
+        NSAssert(_method == POST, @"WTF");
+        fetch = [gManager POST:_urlPath parameters:_parameters constructingBodyWithBlock:_bodyBlock];
+    } else if (_method == GET) {
+        fetch = [gManager GET:_urlPath parameters:_parameters];
+    } else if (_method == POST) {
+        fetch = [gManager POST:_urlPath parameters:_parameters];
+    } else if (_method == PUT) {
+        fetch = [gManager PUT:_urlPath parameters:_parameters];
+    } else if (_method == DELETE) {
+        fetch = [gManager DELETE:_urlPath parameters:_parameters];
+    } else {
+        NSAssert(NO, @"WTF");
     }
 
     if (gAdapter) {

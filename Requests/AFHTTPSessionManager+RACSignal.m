@@ -52,4 +52,46 @@
     }];
 }
 
+- (RACSignal *)PUT:(NSString *)path parameters:(id)parameters {
+    return [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
+        NSURLSessionDataTask *task = [self PUT:path parameters:parameters success:^(NSURLSessionDataTask *task, id responseObject) {
+            [subscriber sendNext:RACTuplePack(responseObject, task.response)];
+            [subscriber sendCompleted];
+        } failure:^(NSURLSessionDataTask *task, NSError *error) {
+            [subscriber sendError:error];
+        }];
+        return [RACDisposable disposableWithBlock:^{
+            [task cancel];
+        }];
+    }];
+}
+
+- (RACSignal *)DELETE:(NSString *)path parameters:(id)parameters {
+    return [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
+        NSURLSessionDataTask *task = [self DELETE:path parameters:parameters success:^(NSURLSessionDataTask *task, id responseObject) {
+            [subscriber sendNext:RACTuplePack(responseObject, task.response)];
+            [subscriber sendCompleted];
+        } failure:^(NSURLSessionDataTask *task, NSError *error) {
+            [subscriber sendError:error];
+        }];
+        return [RACDisposable disposableWithBlock:^{
+            [task cancel];
+        }];
+    }];
+}
+
+- (RACSignal *)HEAD:(NSString *)path parameters:(id)parameters {
+    return [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
+        NSURLSessionDataTask *task = [self HEAD:path parameters:parameters success:^(NSURLSessionDataTask *task) {
+            [subscriber sendNext:RACTuplePack(nil, task.response)];
+            [subscriber sendCompleted];
+        } failure:^(NSURLSessionDataTask *task, NSError *error) {
+            [subscriber sendError:error];
+        }];
+        return [RACDisposable disposableWithBlock:^{
+            [task cancel];
+        }];
+    }];
+}
+
 @end

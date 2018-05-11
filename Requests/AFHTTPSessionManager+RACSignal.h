@@ -14,5 +14,8 @@
 - (RACSignal *)GET:(NSString *)path parameters:(id)parameters;
 - (RACSignal *)POST:(NSString *)path parameters:(id)parameters;
 - (RACSignal *)POST:(NSString *)path parameters:(id)parameters constructingBodyWithBlock:(void (^)(id<AFMultipartFormData> formData))block;
+- (RACSignal *)PUT:(NSString *)path parameters:(id)parameters;
+- (RACSignal *)DELETE:(NSString *)path parameters:(id)parameters;
+- (RACSignal *)HEAD:(NSString *)path parameters:(id)parameters;
 
 @end

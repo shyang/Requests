@@ -13,32 +13,56 @@
 typedef NS_ENUM(NSInteger, NNHttpMethod) {
     GET,
     POST,
+    PUT,
+    DELETE,
+    HEAD
 };
 
 @interface NNRequest : NSObject
 
-@property (nonatomic, readonly) NNHttpMethod method;
-@property (nonatomic, readonly) NSDictionary *parameters;
-@property (nonatomic, readonly) NSDictionary *files;
-@property (nonatomic, readonly) NSString *urlPath;
-
 + (instancetype)GET:(NSString *)urlPath;
 + (instancetype)POST:(NSString *)urlPath;
++ (instancetype)PUT:(NSString *)urlPath;
++ (instancetype)DELETE:(NSString *)urlPath;
 
-- (NNRequest *)addHeader:(NSString *)key value:(NSString *)value;
+// 批量 headers
+- (NNRequest *)headers:(NSDictionary *)headers;
+// 单个 header
+- (NNRequest *)header:(NSString *)key value:(NSString *)value;
+
+// 批量 parameters
+- (NNRequest *)parameters:(NSDictionary *)parameters;
+// 单个 parameter
+- (NNRequest *)parameter:(NSString *)key value:(id)value; // application/x-www-form-urlencoded
 
 // 设置 body: 这几者互斥
-- (NNRequest *)addParam:(NSString *)key value:(NSString *)value; // application/x-www-form-urlencoded
-- (NNRequest *)addJsonBody:(id)body; // application/json
-- (NNRequest *)addRawBody:(NSData *)body; // application/octet-stream
-- (NNRequest *)addFile:(NSString *)key mime:(NSString *)mime data:(NSData *)data; // multipart/form-data
+// application/json
+- (NNRequest *)jsonBody:(id)body;
 
+// application/octet-stream
+- (NNRequest *)rawBody:(NSData *)body;
 
-// 共享的 response adapter，对 response 进行处理
-+ (void)setAdapter:(id (^)(id response))adapter;
-// 共享的 session manager
-+ (void)setHTTPSessionManager:(AFHTTPSessionManager *)manager;
+// multipart/form-data 必须 POST
+- (NNRequest *)multipartBody:(void (^)(id<AFMultipartFormData> formData))block;
 
+/*
+ * 所以请求都需要加入某些 header，如 User-Agent、Authorization:
+   新建一个 manager， 设置其 sessionConfiguration.HTTPAdditionalHeaders
+ * 某些 API 返回 image:
+   新建一个 manager，修改其 responseSerializer
+ * 只从 cache 读取:
+   新建一个 manager，设置其 sessionConfiguration.requestCachePolicy
+ *
+ */
+- (RACSignal *)send:(AFHTTPSessionManager *)manager;
+
+// 使用共享的 session manager
 - (RACSignal *)send;
+
+// 共享的 adapter，对 response 进行处理
+@property (class, nonatomic) id (^adapter)(id response);
+
+// 共享的 session manager
+@property (class, nonatomic) AFHTTPSessionManager *manager;
 
 @end

@@ -18,18 +18,11 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
 
+    NNRequest.manager = [[AFHTTPSessionManager alloc] initWithBaseURL:[NSURL URLWithString:@"http://0.0.0.0:8000"]];
 
-
-    [NNRequest setAdapter:^id(id response) {
-        return response;
-    }];
-
-    [NNRequest setHTTPSessionManager:[[AFHTTPSessionManager alloc] initWithBaseURL:[NSURL URLWithString:@"http://0.0.0.0:8000"]]];
-
-    [[[[[[NNRequest GET:@"/foo.json"]
-         addHeader:@"foo" value:@"bar"]
-        addRawBody:nil]
-       addFile:nil mime:nil data:nil]
+    [[[[[NNRequest GET:@"/foo.json"]
+         header:@"foo" value:@"bar"]
+        rawBody:nil]
       send] subscribeNext:^(id x) {
         NSLog(@"%@", x);
     } error:^(NSError *error) {
