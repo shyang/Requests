@@ -58,12 +58,12 @@
     return [[self alloc] initWithMethod:HEAD urlPath:urlPath];
 }
 
-static id (^gAdapter)(id input);
-+ (id (^)(id))adapter {
+static RACSignal *(^gAdapter)(RACSignal *input);
++ (RACSignal *(^)(RACSignal *input))adapter {
     return gAdapter;
 }
 
-+ (void)setAdapter:(id (^)(id))adapter {
++ (void)setAdapter:(RACSignal *(^)(RACSignal *))adapter {
     gAdapter = adapter;
 }
 

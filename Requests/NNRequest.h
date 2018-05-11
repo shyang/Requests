@@ -60,7 +60,7 @@ typedef NS_ENUM(NSInteger, NNHttpMethod) {
 - (RACSignal *)send;
 
 // 共享的 adapter，对 response 进行处理
-@property (class, nonatomic) id (^adapter)(id response);
+@property (class, nonatomic) RACSignal *(^adapter)(RACSignal *input);
 
 // 共享的 session manager
 @property (class, nonatomic) AFHTTPSessionManager *manager;

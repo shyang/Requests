@@ -7,7 +7,7 @@
 //
 
 #import "ViewController.h"
-#import "NNRequest.h"
+#import "NextViewController.h"
 
 @interface ViewController ()
 
@@ -18,18 +18,11 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-    NNRequest.manager = [[AFHTTPSessionManager alloc] initWithBaseURL:[NSURL URLWithString:@"http://0.0.0.0:8000"]];
-
-    [[[[[NNRequest GET:@"/foo.json"]
-         header:@"foo" value:@"bar"]
-        rawBody:nil]
-      send] subscribeNext:^(id x) {
-        NSLog(@"%@", x);
-    } error:^(NSError *error) {
-        NSLog(@"%@", error);
-    }];
-
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Next" style:UIBarButtonItemStylePlain target:self action:@selector(onNext)];
 }
 
+- (void)onNext {
+    [self.navigationController pushViewController:[NextViewController new] animated:YES];
+}
 
 @end
