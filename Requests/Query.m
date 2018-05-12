@@ -1,6 +1,6 @@
 //
-//  NNRequest.m
-//  NeoNework
+//  Query.m
+//  Requests
 //
 //  Created by shaohua on 2018/5/10.
 //  Copyright © 2018 syang. All rights reserved.
@@ -85,7 +85,6 @@ static AFHTTPSessionManager *gManager;
 }
 
 - (Query *)multipartBody:(void (^)(id<AFMultipartFormData>))block {
-    NSAssert([_parameters count] == 0, @"multipart 格式下的参数一律用 AFMultipartFormData 添加");
     NSAssert(_body == nil, @"multipart 格式下不可指定 body");
     _bodyBlock = block;
     return self;

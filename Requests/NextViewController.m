@@ -27,7 +27,7 @@
 
         }];
         [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-            configuration.HTTPAdditionalHeaders = @{@"Authorization": @"Basic ZGVtbzpkZW1v"};
+            configuration.HTTPAdditionalHeaders = @{@"Authorization": @"Basic ZGVtbzpkZW1v"}; // demo:demo
             (void)[manager initWithBaseURL:manager.baseURL sessionConfiguration:configuration];
 
             [subscriber sendNext:@1];

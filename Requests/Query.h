@@ -1,6 +1,6 @@
 //
-//  NNRequest.h
-//  NeoNework
+//  Query.h
+//  Requests
 //
 //  Created by shaohua on 2018/5/10.
 //  Copyright © 2018 syang. All rights reserved.
@@ -22,19 +22,19 @@
 // 单个 header
 - (Query *)header:(NSString *)key value:(NSString *)value;
 
+// body 的缺省格式是 application/x-www-form-urlencoded
 // 批量 parameters
 - (Query *)parameters:(NSDictionary *)parameters;
 // 单个 parameter
-- (Query *)parameter:(NSString *)key value:(id)value; // application/x-www-form-urlencoded
+- (Query *)parameter:(NSString *)key value:(id)value;
 
-// 设置 body: 这几者互斥
-// application/json
+// 设置 body 的格式为 application/json
 - (Query *)jsonBody:(id)body;
 
-// application/octet-stream
+// 设置 body 的格式为 application/octet-stream
 - (Query *)rawBody:(NSData *)body;
 
-// multipart/form-data 必须 POST
+// 设置 body 的格式为 multipart/form-data 必须 POST
 - (Query *)multipartBody:(void (^)(id<AFMultipartFormData> formData))block;
 
 /*
