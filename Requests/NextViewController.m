@@ -8,7 +8,7 @@
 //
 
 #import "NextViewController.h"
-#import "NNRequest.h"
+#import "Query.h"
 #import "AFHTTPSessionManager+RACSignal.h"
 
 @implementation NextViewController
@@ -19,7 +19,7 @@
 
     NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration ephemeralSessionConfiguration];
     AFHTTPSessionManager *manager = [[AFHTTPSessionManager alloc] initWithBaseURL:[NSURL URLWithString:@"http://httpbin.org"] sessionConfiguration:configuration];
-    NNRequest.manager = manager;
+    Query.manager = manager;
 
     RACSignal *retrySignal = [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
         UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Auth" message:nil preferredStyle:UIAlertControllerStyleAlert];
@@ -43,7 +43,7 @@
         return nil;
     }];
 
-    NNRequest.adapter = ^RACSignal *(RACSignal *input) {
+    Query.adapter = ^RACSignal *(RACSignal *input) {
         return [[input materialize] flattenMap:^(RACEvent *event) {
             // [event.error.userInfo[@"result"] isEqualToString:@"login"]
             NSHTTPURLResponse *response = event.error.userInfo[AFNetworkingOperationFailingURLResponseErrorKey];
@@ -62,7 +62,7 @@
      AFN 会再发起一次重复网络请求
      https://forums.developer.apple.com/thread/39293
      */
-    [[[NNRequest GET:@"/basic-auth/demo/demo"] send] subscribeNext:^(id x) {
+    [[[Query GET:@"/basic-auth/demo/demo"] send] subscribeNext:^(id x) {
         NSLog(@"ok: %@", x);
     } error:^(NSError * _Nullable error) {
         NSLog(@"err: %@", error);

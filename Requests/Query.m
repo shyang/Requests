@@ -9,11 +9,19 @@
 #import <objc/runtime.h>
 
 #import "AFHTTPSessionManager+RACSignal.h"
-#import "NNRequest.h"
+#import "Query.h"
 
-@interface NNRequest ()
+typedef NS_ENUM(NSInteger, HttpMethod) {
+    GET,
+    POST,
+    PUT,
+    DELETE,
+    HEAD
+};
 
-@property (nonatomic) NNHttpMethod method;
+@interface Query ()
+
+@property (nonatomic) HttpMethod method;
 @property (nonatomic) NSString *urlPath;
 
 @property (nonatomic) NSMutableDictionary *parameters;
@@ -25,9 +33,9 @@
 
 @end
 
-@implementation NNRequest
+@implementation Query
 
-- (instancetype)initWithMethod:(NNHttpMethod)method urlPath:(NSString *)urlPath {
+- (instancetype)initWithMethod:(HttpMethod)method urlPath:(NSString *)urlPath {
     if (self = [super init]) {
         _parameters = [NSMutableDictionary new];
         _headers = [NSMutableDictionary new];
@@ -76,41 +84,41 @@ static AFHTTPSessionManager *gManager;
     gManager = manager;
 }
 
-- (NNRequest *)multipartBody:(void (^)(id<AFMultipartFormData>))block {
+- (Query *)multipartBody:(void (^)(id<AFMultipartFormData>))block {
     NSAssert([_parameters count] == 0, @"multipart 格式下的参数一律用 AFMultipartFormData 添加");
     NSAssert(_body == nil, @"multipart 格式下不可指定 body");
     _bodyBlock = block;
     return self;
 }
 
-- (NNRequest *)parameters:(NSDictionary *)parameters {
+- (Query *)parameters:(NSDictionary *)parameters {
     [_parameters addEntriesFromDictionary:parameters];
     return self;
 }
 
-- (NNRequest *)parameter:(NSString *)key value:(NSString *)value {
+- (Query *)parameter:(NSString *)key value:(NSString *)value {
     _parameters[key] = value;
     return self;
 }
 
-- (NNRequest *)rawBody:(NSData *)body {
+- (Query *)rawBody:(NSData *)body {
     _body = body;
     return self;
 }
 
-- (NNRequest *)jsonBody:(id)body {
+- (Query *)jsonBody:(id)body {
     NSError *error = nil;
     _body = [NSJSONSerialization dataWithJSONObject:body options:0 error:&error];
     NSAssert(error == nil, @"WTF");
     return self;
 }
 
-- (NNRequest *)headers:(NSDictionary *)headers {
+- (Query *)headers:(NSDictionary *)headers {
     [_headers addEntriesFromDictionary:headers];
     return self;
 }
 
-- (NNRequest *)header:(NSString *)key value:(NSString *)value {
+- (Query *)header:(NSString *)key value:(NSString *)value {
     _headers[key] = value;
     return self;
 }

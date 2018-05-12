@@ -10,15 +10,7 @@
 #import <ReactiveObjC/ReactiveObjC.h>
 #import <AFNetworking/AFNetworking.h>
 
-typedef NS_ENUM(NSInteger, NNHttpMethod) {
-    GET,
-    POST,
-    PUT,
-    DELETE,
-    HEAD
-};
-
-@interface NNRequest : NSObject
+@interface Query : NSObject
 
 + (instancetype)GET:(NSString *)urlPath;
 + (instancetype)POST:(NSString *)urlPath;
@@ -26,24 +18,24 @@ typedef NS_ENUM(NSInteger, NNHttpMethod) {
 + (instancetype)DELETE:(NSString *)urlPath;
 
 // 批量 headers
-- (NNRequest *)headers:(NSDictionary *)headers;
+- (Query *)headers:(NSDictionary *)headers;
 // 单个 header
-- (NNRequest *)header:(NSString *)key value:(NSString *)value;
+- (Query *)header:(NSString *)key value:(NSString *)value;
 
 // 批量 parameters
-- (NNRequest *)parameters:(NSDictionary *)parameters;
+- (Query *)parameters:(NSDictionary *)parameters;
 // 单个 parameter
-- (NNRequest *)parameter:(NSString *)key value:(id)value; // application/x-www-form-urlencoded
+- (Query *)parameter:(NSString *)key value:(id)value; // application/x-www-form-urlencoded
 
 // 设置 body: 这几者互斥
 // application/json
-- (NNRequest *)jsonBody:(id)body;
+- (Query *)jsonBody:(id)body;
 
 // application/octet-stream
-- (NNRequest *)rawBody:(NSData *)body;
+- (Query *)rawBody:(NSData *)body;
 
 // multipart/form-data 必须 POST
-- (NNRequest *)multipartBody:(void (^)(id<AFMultipartFormData> formData))block;
+- (Query *)multipartBody:(void (^)(id<AFMultipartFormData> formData))block;
 
 /*
  * 所以请求都需要加入某些 header，如 User-Agent、Authorization:
