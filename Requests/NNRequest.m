@@ -115,19 +115,19 @@ static AFHTTPSessionManager *gManager;
     return self;
 }
 
-- (RACSignal *)send {
+- (RACSignal *)send:(AFHTTPSessionManager *)manager {
     RACSignal *fetch = nil;
     if (_bodyBlock) {
         NSAssert(_method == POST, @"WTF");
-        fetch = [gManager POST:_urlPath parameters:_parameters constructingBodyWithBlock:_bodyBlock];
+        fetch = [manager POST:_urlPath parameters:_parameters constructingBodyWithBlock:_bodyBlock];
     } else if (_method == GET) {
-        fetch = [gManager GET:_urlPath parameters:_parameters];
+        fetch = [manager GET:_urlPath parameters:_parameters];
     } else if (_method == POST) {
-        fetch = [gManager POST:_urlPath parameters:_parameters];
+        fetch = [manager POST:_urlPath parameters:_parameters];
     } else if (_method == PUT) {
-        fetch = [gManager PUT:_urlPath parameters:_parameters];
+        fetch = [manager PUT:_urlPath parameters:_parameters];
     } else if (_method == DELETE) {
-        fetch = [gManager DELETE:_urlPath parameters:_parameters];
+        fetch = [manager DELETE:_urlPath parameters:_parameters];
     } else {
         NSAssert(NO, @"WTF");
     }
@@ -137,6 +137,10 @@ static AFHTTPSessionManager *gManager;
     }
 
     return fetch;
+}
+
+- (RACSignal *)send {
+    return [self send:gManager];
 }
 
 @end
