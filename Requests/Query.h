@@ -12,30 +12,38 @@
 
 @interface Query : NSObject
 
-+ (instancetype)GET:(NSString *)urlPath;
-+ (instancetype)POST:(NSString *)urlPath;
-+ (instancetype)PUT:(NSString *)urlPath;
-+ (instancetype)DELETE:(NSString *)urlPath;
+#pragma mark - The Builder Part 构造对象
 
-// 批量 headers
-- (Query *)headers:(NSDictionary *)headers;
-// 单个 header
-- (Query *)header:(NSString *)key value:(NSString *)value;
+@property (nonatomic, readonly) void (^get)(NSString *urlPath);
+@property (nonatomic, readonly) void (^post)(NSString *urlPath);
+@property (nonatomic, readonly) void (^put)(NSString *urlPath);
+@property (nonatomic, readonly) void (^delete)(NSString *urlPath);
 
-// body 的缺省格式是 application/x-www-form-urlencoded
-// 批量 parameters
-- (Query *)parameters:(NSDictionary *)parameters;
-// 单个 parameter
-- (Query *)parameter:(NSString *)key value:(id)value;
+/*
+ 去除 parameters:(NSDictionary *)parameters 的理由：
+ 容易写出这样的代码 parameters:@{key: var} 并且对 var 可能 nil 没有保护，潜在的 crash！
+
+ 而 parameters[key] = var; 遇到 nil 时是删除该 pair
+ */
+
+@property (nonatomic, readonly) NSMutableDictionary *parameters;
+@property (nonatomic, readonly) NSMutableDictionary *headers;
+
+// 缺省 body 的格式为 application/x-www-form-urlencoded
 
 // 设置 body 的格式为 application/json
-- (Query *)jsonBody:(id)body;
+// 可传入 NSArray/NSDictionary/NSString 等可被 JSON Serialize 的对象
+@property (nonatomic) id jsonBody;
 
 // 设置 body 的格式为 application/octet-stream
-- (Query *)rawBody:(NSData *)body;
+@property (nonatomic) NSData *rawBody;
 
 // 设置 body 的格式为 multipart/form-data 必须 POST
-- (Query *)multipartBody:(void (^)(id<AFMultipartFormData> formData))block;
+@property (nonatomic) void (^multipartBody)(id<AFMultipartFormData> formData);
+
++ (instancetype)build:(void (^)(Query *q))builder;
+
+#pragma mark - The Use Part 使用对象
 
 /*
  * 所以请求都需要加入某些 header，如 User-Agent、Authorization:
@@ -51,6 +59,7 @@
 // 使用共享的 session manager
 - (RACSignal *)send;
 
+#pragma mark - Global Configuration 全局的配置
 // 共享的 adapter，对 response 进行处理
 @property (class, nonatomic) RACSignal *(^adapter)(RACSignal *input);
 

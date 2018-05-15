@@ -62,7 +62,9 @@
      AFN 会再发起一次重复网络请求
      https://forums.developer.apple.com/thread/39293
      */
-    [[[Query GET:@"/basic-auth/demo/demo"] send] subscribeNext:^(id x) {
+    [[[Query build:^(Query *q) {
+        q.get(@"/basic-auth/demo/demo");
+    }] send] subscribeNext:^(id x) {
         NSLog(@"ok: %@", x);
     } error:^(NSError * _Nullable error) {
         NSLog(@"err: %@", error);

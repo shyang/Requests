@@ -16,7 +16,6 @@ typedef NS_ENUM(NSInteger, HttpMethod) {
     POST,
     PUT,
     DELETE,
-    HEAD
 };
 
 @interface Query ()
@@ -26,44 +25,51 @@ typedef NS_ENUM(NSInteger, HttpMethod) {
 
 @property (nonatomic) NSMutableDictionary *parameters;
 @property (nonatomic) NSMutableDictionary *headers;
-@property (nonatomic) NSMutableDictionary *files;
-
-@property (nonatomic) NSData *body;
-@property (nonatomic) void (^bodyBlock)(id<AFMultipartFormData>);
 
 @end
 
 @implementation Query
 
-- (instancetype)initWithMethod:(HttpMethod)method urlPath:(NSString *)urlPath {
+- (instancetype)init {
     if (self = [super init]) {
         _parameters = [NSMutableDictionary new];
         _headers = [NSMutableDictionary new];
-        _files = [NSMutableDictionary new];
-        _method = method;
-        _urlPath = urlPath;
     }
     return self;
 }
 
-+ (instancetype)GET:(NSString *)urlPath {
-    return [[self alloc] initWithMethod:GET urlPath:urlPath];
+- (void (^)(NSString *))get {
+    return ^(NSString *urlPath) {
+        self.urlPath = urlPath;
+        self.method = GET;
+    };
 }
 
-+ (instancetype)POST:(NSString *)urlPath {
-    return [[self alloc] initWithMethod:POST urlPath:urlPath];
+- (void (^)(NSString *))post {
+    return ^(NSString *urlPath) {
+        self.urlPath = urlPath;
+        self.method = POST;
+    };
 }
 
-+ (instancetype)PUT:(NSString *)urlPath {
-    return [[self alloc] initWithMethod:PUT urlPath:urlPath];
+- (void (^)(NSString *))put {
+    return ^(NSString *urlPath) {
+        self.urlPath = urlPath;
+        self.method = PUT;
+    };
 }
 
-+ (instancetype)DELETE:(NSString *)urlPath {
-    return [[self alloc] initWithMethod:DELETE urlPath:urlPath];
+- (void (^)(NSString *))delete {
+    return ^(NSString *urlPath) {
+        self.urlPath = urlPath;
+        self.method = DELETE;
+    };
 }
 
-+ (instancetype)HEAD:(NSString *)urlPath {
-    return [[self alloc] initWithMethod:HEAD urlPath:urlPath];
++ (instancetype)build:(void (^)(Query *))builder {
+    Query *q = [Query new];
+    builder(q);
+    return q;
 }
 
 static RACSignal *(^gAdapter)(RACSignal *input);
@@ -84,49 +90,13 @@ static AFHTTPSessionManager *gManager;
     gManager = manager;
 }
 
-- (Query *)multipartBody:(void (^)(id<AFMultipartFormData>))block {
-    NSAssert(_body == nil, @"multipart 格式下不可指定 body");
-    _bodyBlock = block;
-    return self;
-}
-
-- (Query *)parameters:(NSDictionary *)parameters {
-    [_parameters addEntriesFromDictionary:parameters];
-    return self;
-}
-
-- (Query *)parameter:(NSString *)key value:(NSString *)value {
-    _parameters[key] = value;
-    return self;
-}
-
-- (Query *)rawBody:(NSData *)body {
-    _body = body;
-    return self;
-}
-
-- (Query *)jsonBody:(id)body {
-    NSError *error = nil;
-    _body = [NSJSONSerialization dataWithJSONObject:body options:0 error:&error];
-    NSAssert(error == nil, @"WTF");
-    return self;
-}
-
-- (Query *)headers:(NSDictionary *)headers {
-    [_headers addEntriesFromDictionary:headers];
-    return self;
-}
-
-- (Query *)header:(NSString *)key value:(NSString *)value {
-    _headers[key] = value;
-    return self;
-}
-
 - (RACSignal *)send:(AFHTTPSessionManager *)manager {
+    // _body = [NSJSONSerialization dataWithJSONObject:jsonBody options:0 error:&error];
+
     RACSignal *fetch = nil;
-    if (_bodyBlock) {
+    if (_multipartBody) {
         NSAssert(_method == POST, @"WTF");
-        fetch = [manager POST:_urlPath parameters:_parameters constructingBodyWithBlock:_bodyBlock];
+        fetch = [manager POST:_urlPath parameters:_parameters constructingBodyWithBlock:_multipartBody];
     } else if (_method == GET) {
         fetch = [manager GET:_urlPath parameters:_parameters];
     } else if (_method == POST) {
