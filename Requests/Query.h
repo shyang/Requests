@@ -10,6 +10,8 @@
 #import <ReactiveObjC/ReactiveObjC.h>
 #import <AFNetworking/AFNetworking.h>
 
+#import "AFHTTPSessionManager+RACSignal.h"
+
 @interface Query : NSObject
 
 #pragma mark - The Builder Part 构造对象

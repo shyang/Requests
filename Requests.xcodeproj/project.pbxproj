@@ -10,13 +10,11 @@
 		9BC486A3A0577E1D7FBA7126 /* libPods-Requests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 09EC8CC6DC978663F59C9C27 /* libPods-Requests.a */; };
 		AD44578F20A545C300D4A28E /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = AD44578E20A545C300D4A28E /* AppDelegate.m */; };
 		AD44579220A545C400D4A28E /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AD44579120A545C300D4A28E /* ViewController.m */; };
-		AD44579520A545C400D4A28E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AD44579320A545C400D4A28E /* Main.storyboard */; };
 		AD44579720A545C600D4A28E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AD44579620A545C600D4A28E /* Assets.xcassets */; };
 		AD44579A20A545C600D4A28E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AD44579820A545C600D4A28E /* LaunchScreen.storyboard */; };
 		AD44579D20A545C600D4A28E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = AD44579C20A545C600D4A28E /* main.m */; };
 		AD4457A520A545FC00D4A28E /* AFHTTPSessionManager+RACSignal.m in Sources */ = {isa = PBXBuildFile; fileRef = AD4457A420A545FB00D4A28E /* AFHTTPSessionManager+RACSignal.m */; };
 		AD4457A820A5461200D4A28E /* Query.m in Sources */ = {isa = PBXBuildFile; fileRef = AD4457A620A5461100D4A28E /* Query.m */; };
-		AD4457AF20A5A86C00D4A28E /* NextViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AD4457AE20A5A86C00D4A28E /* NextViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -27,7 +25,6 @@
 		AD44578E20A545C300D4A28E /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		AD44579020A545C300D4A28E /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
 		AD44579120A545C300D4A28E /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
-		AD44579420A545C400D4A28E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		AD44579620A545C600D4A28E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		AD44579920A545C600D4A28E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		AD44579B20A545C600D4A28E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -36,8 +33,6 @@
 		AD4457A420A545FB00D4A28E /* AFHTTPSessionManager+RACSignal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "AFHTTPSessionManager+RACSignal.m"; sourceTree = "<group>"; };
 		AD4457A620A5461100D4A28E /* Query.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Query.m; sourceTree = "<group>"; };
 		AD4457A720A5461100D4A28E /* Query.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Query.h; sourceTree = "<group>"; };
-		AD4457AD20A5A86C00D4A28E /* NextViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NextViewController.h; sourceTree = "<group>"; };
-		AD4457AE20A5A86C00D4A28E /* NextViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NextViewController.m; sourceTree = "<group>"; };
 		D3A66BD366C9D9D775A7C48F /* Pods-Requests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Requests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Requests/Pods-Requests.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -99,9 +94,6 @@
 				AD44578E20A545C300D4A28E /* AppDelegate.m */,
 				AD44579020A545C300D4A28E /* ViewController.h */,
 				AD44579120A545C300D4A28E /* ViewController.m */,
-				AD4457AD20A5A86C00D4A28E /* NextViewController.h */,
-				AD4457AE20A5A86C00D4A28E /* NextViewController.m */,
-				AD44579320A545C400D4A28E /* Main.storyboard */,
 				AD44579620A545C600D4A28E /* Assets.xcassets */,
 				AD44579820A545C600D4A28E /* LaunchScreen.storyboard */,
 				AD44579B20A545C600D4A28E /* Info.plist */,
@@ -172,7 +164,6 @@
 			files = (
 				AD44579A20A545C600D4A28E /* LaunchScreen.storyboard in Resources */,
 				AD44579720A545C600D4A28E /* Assets.xcassets in Resources */,
-				AD44579520A545C400D4A28E /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -235,7 +226,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				AD4457A520A545FC00D4A28E /* AFHTTPSessionManager+RACSignal.m in Sources */,
-				AD4457AF20A5A86C00D4A28E /* NextViewController.m in Sources */,
 				AD44579220A545C400D4A28E /* ViewController.m in Sources */,
 				AD44579D20A545C600D4A28E /* main.m in Sources */,
 				AD4457A820A5461200D4A28E /* Query.m in Sources */,
@@ -246,14 +236,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
-		AD44579320A545C400D4A28E /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				AD44579420A545C400D4A28E /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
 		AD44579820A545C600D4A28E /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (

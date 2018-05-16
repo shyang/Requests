@@ -8,7 +8,6 @@
 
 #import <objc/runtime.h>
 
-#import "AFHTTPSessionManager+RACSignal.h"
 #import "Query.h"
 
 typedef NS_ENUM(NSInteger, HttpMethod) {
