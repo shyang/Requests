@@ -35,9 +35,8 @@
     @weakify(self);
     return [[self showHeaderWithCommand:command] scanWithStart:[NSMutableArray array] reduce:^id (id running, id next) {
         @strongify(self);
-        NSArray *json = [next first];
-        NSDictionary *cursor = json[0];
-        NSArray *items = json[1];
+        NSDictionary *cursor = next[0];
+        NSArray *items = next[1];
         int page = [cursor[@"page"] intValue];
         int pages = [cursor[@"pages"] intValue];
         if (page < pages) {

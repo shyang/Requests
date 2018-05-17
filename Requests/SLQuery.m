@@ -57,18 +57,18 @@ static RACSignal *retrySignal;
         return [[RACSignal return:event] dematerialize];
     }];
 
-    // 定制 3: 全局解析
+    // 定制 3: 全局解析，此处扔掉了 value.second 即 NSHTTPURLResponse
     if (_modelClass) {
         output = [output flattenMap:^RACSignal *(id value) {
             NSArray *body = [value first];
-
+            NSDictionary *cursor = body[0];
             NSArray *list = body[1];
             NSError *error = nil;
             id objects = [MTLJSONAdapter modelsOfClass:self.modelClass fromJSONArray:list error:&error];
             if (error) {
                 return [RACSignal error:error];
             }
-            return [RACSignal return:objects];
+            return [RACSignal return:@[cursor, objects]];
         }];
     }
 

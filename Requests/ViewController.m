@@ -8,8 +8,7 @@
 
 #import "ViewController.h"
 #import "SLQuery.h"
-#import "UIViewController+Query.h"
-#import "UIScrollView+Refresh.h"
+#import "CountriesViewController.h"
 #import "Country.h"
 
 @interface ViewController ()
@@ -30,19 +29,10 @@
                @"POST application/x-www-form-urlencoded",
                @"PUT application/json",
                @"DELETE ?query-string",
-               @"Parse by Mantle"
+               @"Parse by Mantle",
+               @"Pull to refresh",
                ];
     [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:NSStringFromClass([UITableViewCell class])];
-
-    RACCommand *cmd = [self commandWithQuery:[Query build:^(Query *q) {
-        q.get(@"http://api.worldbank.org/v2/topics", @{@"format": @"json", @"per_page": @"10"});
-    }]];
-    [[self.tableView showHeaderAndFooterWithCommand:cmd] subscribeNext:^(id x) {
-        NSLog(@"pull header ok %@", x);
-    }];
-    [cmd.errors subscribeNext:^(NSError *x) {
-        NSLog(@"pull header err %@", x);
-    }];
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
@@ -128,6 +118,8 @@
         } error:^(NSError *error) {
             NSLog(@"err: %@", error);
         }];
+    } else if (indexPath.row == 8) {
+        [self.navigationController pushViewController:[CountriesViewController new] animated:YES];
     }
 }
 
