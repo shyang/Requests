@@ -10,4 +10,5 @@ target 'Requests' do
   pod 'AFNetworking'
   pod 'ReactiveObjC'
   pod 'MJRefresh'
+  pod 'Mantle'
 end

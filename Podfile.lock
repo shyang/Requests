@@ -14,25 +14,31 @@ PODS:
   - AFNetworking/Serialization (3.2.1)
   - AFNetworking/UIKit (3.2.1):
     - AFNetworking/NSURLSession
+  - Mantle (2.1.0):
+    - Mantle/extobjc (= 2.1.0)
+  - Mantle/extobjc (2.1.0)
   - MJRefresh (3.1.15.3)
   - ReactiveObjC (3.1.0)
 
 DEPENDENCIES:
   - AFNetworking
+  - Mantle
   - MJRefresh
   - ReactiveObjC
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
     - AFNetworking
+    - Mantle
     - MJRefresh
     - ReactiveObjC
 
 SPEC CHECKSUMS:
   AFNetworking: b6f891fdfaed196b46c7a83cf209e09697b94057
+  Mantle: 2fa750afa478cd625a94230fbf1c13462f29395b
   MJRefresh: b48380ae2b927b46c4ef000de9adb8dc748e1df7
   ReactiveObjC: 2a38ea15335de4119d8b17caf1db1484f61db902
 
-PODFILE CHECKSUM: 0b816f8e90b77005b53e0767509f5e224e409c3e
+PODFILE CHECKSUM: f7d29be4ab9767949f62b3b78689584b9768ace2
 
 COCOAPODS: 1.5.2
