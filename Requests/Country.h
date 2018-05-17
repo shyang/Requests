@@ -9,9 +9,13 @@
 #import <Foundation/Foundation.h>
 #import <Mantle/Mantle.h>
 
+#import "SLQuery.h"
+
 @interface Country : MTLModel <MTLJSONSerializing>
 
 @property (nonatomic) NSString *name;
 @property (nonatomic) NSString *iso2Code;
+
++ (Query *)getAllContries;
 
 @end

@@ -123,10 +123,7 @@
             NSLog(@"err: %@", error);
         }];
     } else if (indexPath.row == 7) {
-        [[[SLQuery build:^(SLQuery *q) {
-            q.get(@"http://api.worldbank.org/v2/countries", @{@"format": @"json"});
-            q.modelClass = [Country class];
-        }] send] subscribeNext:^(id x) {
+        [[[Country getAllContries] send] subscribeNext:^(id x) {
             NSLog(@"ok: %@", x);
         } error:^(NSError *error) {
             NSLog(@"err: %@", error);
