@@ -16,10 +16,10 @@
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    UIWindow *window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
-    window.rootViewController = [[UINavigationController alloc] initWithRootViewController:[ViewController new]];
-    window.backgroundColor = [UIColor greenColor];
-    [window makeKeyAndVisible];
+    _window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
+    _window.rootViewController = [[UINavigationController alloc] initWithRootViewController:[ViewController new]];
+    _window.backgroundColor = [UIColor greenColor];
+    [_window makeKeyAndVisible];
     return YES;
 }
 
