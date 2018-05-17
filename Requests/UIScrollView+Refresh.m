@@ -31,14 +31,16 @@
 }
 
 - (RACSignal *)showHeaderAndFooterWithCommand:(RACCommand *)command {
-    __block int page = 0;
-
     @weakify(command);
     @weakify(self);
     return [[self showHeaderWithCommand:command] scanWithStart:[NSMutableArray array] reduce:^id (id running, id next) {
         @strongify(self);
-
-        if (page < 3) {
+        NSArray *json = [next first];
+        NSDictionary *cursor = json[0];
+        NSArray *items = json[1];
+        int page = [cursor[@"page"] intValue];
+        int pages = [cursor[@"pages"] intValue];
+        if (page < pages) {
             if (self.mj_footer) {
                 [self.mj_footer endRefreshing];
             } else { // 无条件重新创建逻辑上 okay 但 UI 上高度有抖动
@@ -47,16 +49,13 @@
 
             self.mj_footer.refreshingBlock =^{
                 @strongify(command);
-                [command execute:@{@"page": @(page++)}];
+                [command execute:@{@"page": @(page + 1)}];
             };
-
-            [[next first][@"headers"] enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
-                [running addObject:[NSString stringWithFormat:@"%d %@ = %@", page, key, obj]];
-            }];
-            return running;
+        } else {
+            [self.mj_footer endRefreshingWithNoMoreData];
         }
 
-        [self.mj_footer endRefreshingWithNoMoreData];
+        [running addObjectsFromArray:items];
         return running;
     }];
 }

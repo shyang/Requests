@@ -12,6 +12,7 @@
 
 - (RACCommand *)commandWithQuery:(Query *)query {
     return [[RACCommand alloc] initWithSignalBlock:^RACSignal *(id input) {
+        [query.parameters addEntriesFromDictionary:input];
         return [[query send] takeUntil:self.rac_willDeallocSignal];
     }];
 }
@@ -19,6 +20,7 @@
 - (RACCommand *)commandWithQueries:(NSArray<Query *> *)queries {
     return [[RACCommand alloc] initWithSignalBlock:^RACSignal *(id input) {
         return [[RACSignal zip:[[queries rac_sequence] map:^(Query *value) {
+            [value.parameters addEntriesFromDictionary:input];
             return [value send];
         }]] takeUntil:self.rac_willDeallocSignal];
     }];

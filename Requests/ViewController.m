@@ -33,7 +33,7 @@
     [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:NSStringFromClass([UITableViewCell class])];
 
     RACCommand *cmd = [self commandWithQuery:[Query build:^(Query *q) {
-        q.get(@"https://httpbin.org/headers", nil);
+        q.get(@"http://api.worldbank.org/v2/topics?format=json&per_page=10", nil);
     }]];
     [[self.tableView showHeaderAndFooterWithCommand:cmd] subscribeNext:^(id x) {
         NSLog(@"pull header ok %@", x);
