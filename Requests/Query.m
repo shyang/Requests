@@ -95,18 +95,9 @@ typedef NS_ENUM(NSInteger, HttpMethod) {
     return q;
 }
 
-static AFHTTPSessionManager *gManager;
-+ (AFHTTPSessionManager *)manager {
-    return gManager;
-}
-
-+ (void)setManager:(AFHTTPSessionManager *)manager {
-    gManager = manager;
-}
-
 - (RACSignal *)send:(AFHTTPSessionManager *)manager {
     if (!manager) {
-        manager = gManager ?: [AFHTTPSessionManager manager];
+        manager = [AFHTTPSessionManager manager];
     }
 
     if (_jsonBody) {

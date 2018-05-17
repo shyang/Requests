@@ -57,12 +57,7 @@
  */
 - (RACSignal *)send:(AFHTTPSessionManager *)manager;
 
-// 使用共享的 session manager
+// 使用缺省的 [AFHTTPSessionManager manager]
 - (RACSignal *)send;
-
-#pragma mark - Global Configuration 全局的配置
-
-// 共享的 session manager
-@property (class, nonatomic) AFHTTPSessionManager *manager;
 
 @end

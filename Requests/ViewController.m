@@ -20,7 +20,14 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-    _items = @[@"Basic Auth", @"POST Multipart", @"POST JSON", @"POST form"];
+    _items = @[@"401 Basic Auth",
+               @"GET ?query-string",
+               @"POST multipart/form-data",
+               @"POST application/json",
+               @"POST application/x-www-form-urlencoded",
+               @"PUT application/json",
+               @"DELETE ?query-string",
+               ];
     [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:NSStringFromClass([UITableViewCell class])];
 }
 
@@ -49,10 +56,17 @@
         } error:^(NSError * _Nullable error) {
             NSLog(@"err: %@", error);
         }];
-
     } else if (indexPath.row == 1) {
         [[[Query build:^(Query *q) {
-            q.postMultipart(@"http://httpbin.org/post", @{@"m1": @"bb", @"m2": @"dd"}, ^(id<AFMultipartFormData> formData) {
+            q.get(@"http://httpbin.org/get", @{@"1": @"bb", @"2": @"dd"});
+        }] send] subscribeNext:^(id x) {
+            NSLog(@"ok: %@", x);
+        } error:^(NSError *error) {
+            NSLog(@"err: %@", error);
+        }];
+    } else if (indexPath.row == 2) {
+        [[[Query build:^(Query *q) {
+            q.postMultipart(@"http://httpbin.org/post", @{@"3": @"bb", @"4": @"dd"}, ^(id<AFMultipartFormData> formData) {
                 NSURL *url = [[NSBundle mainBundle] URLForResource:@"Info" withExtension:@"plist"];
                 NSData *d = [NSData dataWithContentsOfURL:url];
                 [formData appendPartWithFormData:d name:@"m3"];
@@ -62,17 +76,33 @@
         } error:^(NSError *error) {
             NSLog(@"err: %@", error);
         }];
-    } else if (indexPath.row == 2) {
+    } else if (indexPath.row == 3) {
         [[[Query build:^(Query *q) {
-            q.postJson(@"http://httpbin.org/post", @{@"j1": @"bb", @"j2": @"dd"});
+            q.postJson(@"http://httpbin.org/post", @{@"5": @"bb", @"6": @"dd"});
         }] send] subscribeNext:^(id x) {
             NSLog(@"ok: %@", x);
         } error:^(NSError *error) {
             NSLog(@"err: %@", error);
         }];
-    } else if (indexPath.row == 3) {
+    } else if (indexPath.row == 4) {
         [[[Query build:^(Query *q) {
-            q.post(@"http://httpbin.org/post", @{@"f1": @"bb", @"f2": @"dd"});
+            q.post(@"http://httpbin.org/post", @{@"7": @"bb", @"8": @"dd"});
+        }] send] subscribeNext:^(id x) {
+            NSLog(@"ok: %@", x);
+        } error:^(NSError *error) {
+            NSLog(@"err: %@", error);
+        }];
+    } else if (indexPath.row == 5) {
+        [[[Query build:^(Query *q) {
+            q.put(@"http://httpbin.org/put", @{@"9": @"bb", @"10": @"dd"});
+        }] send] subscribeNext:^(id x) {
+            NSLog(@"ok: %@", x);
+        } error:^(NSError *error) {
+            NSLog(@"err: %@", error);
+        }];
+    } else if (indexPath.row == 6) {
+        [[[Query build:^(Query *q) {
+            q.delete(@"http://httpbin.org/delete", @{@"11": @"bb", @"12": @"dd"});
         }] send] subscribeNext:^(id x) {
             NSLog(@"ok: %@", x);
         } error:^(NSError *error) {
@@ -80,4 +110,5 @@
         }];
     }
 }
+
 @end

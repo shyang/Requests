@@ -10,10 +10,10 @@
 
 @implementation SLQuery
 
-- (RACSignal *)send:(AFHTTPSessionManager *)manager {
-    RACSignal *output = [super send:manager];
+static RACSignal *retrySignal;
 
-    RACSignal *retrySignal = [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
++ (void)load {
+    retrySignal = [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
         UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Auth" message:nil preferredStyle:UIAlertControllerStyleAlert];
         [alert addTextFieldWithConfigurationHandler:^(UITextField *textField) {
 
@@ -31,7 +31,16 @@
         }];
         return nil;
     }];
+}
 
+- (RACSignal *)send:(AFHTTPSessionManager *)manager {
+    if (!manager) {
+        // 定制 1: 覆盖全局 manager
+        manager = [AFHTTPSessionManager manager];
+    }
+    RACSignal *output = [super send:manager];
+
+    // 定制 2: 全局性地对所有发出的网络请求进行全局性的设置：如认证、解析等
     return [[output materialize] flattenMap:^(RACEvent *event) {
         // [event.error.userInfo[@"result"] isEqualToString:@"login"]
         NSHTTPURLResponse *response = event.error.userInfo[AFNetworkingOperationFailingURLResponseErrorKey];
