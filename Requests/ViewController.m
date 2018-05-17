@@ -8,6 +8,8 @@
 
 #import "ViewController.h"
 #import "SLQuery.h"
+#import "UIViewController+Query.h"
+#import "UIScrollView+Refresh.h"
 
 @interface ViewController ()
 
@@ -29,6 +31,16 @@
                @"DELETE ?query-string",
                ];
     [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:NSStringFromClass([UITableViewCell class])];
+
+    RACCommand *cmd = [self commandWithQuery:[Query build:^(Query *q) {
+        q.get(@"https://httpbin.org/headers", nil);
+    }]];
+    [[self.tableView showHeaderAndFooterWithCommand:cmd] subscribeNext:^(id x) {
+        NSLog(@"pull header ok %@", x);
+    }];
+    [cmd.errors subscribeNext:^(NSError *x) {
+        NSLog(@"pull header err %@", x);
+    }];
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {

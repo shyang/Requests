@@ -16,6 +16,8 @@
 		AD4457A520A545FC00D4A28E /* AFHTTPSessionManager+RACSignal.m in Sources */ = {isa = PBXBuildFile; fileRef = AD4457A420A545FB00D4A28E /* AFHTTPSessionManager+RACSignal.m */; };
 		AD4457A820A5461200D4A28E /* Query.m in Sources */ = {isa = PBXBuildFile; fileRef = AD4457A620A5461100D4A28E /* Query.m */; };
 		AD609CED20ADD7030069D159 /* SLQuery.m in Sources */ = {isa = PBXBuildFile; fileRef = AD609CEC20ADD7030069D159 /* SLQuery.m */; };
+		AD609CF020ADE9450069D159 /* UIViewController+Query.m in Sources */ = {isa = PBXBuildFile; fileRef = AD609CEF20ADE9450069D159 /* UIViewController+Query.m */; };
+		AD609CF320ADEB280069D159 /* UIScrollView+Refresh.m in Sources */ = {isa = PBXBuildFile; fileRef = AD609CF220ADEB280069D159 /* UIScrollView+Refresh.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -36,6 +38,10 @@
 		AD4457A720A5461100D4A28E /* Query.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Query.h; sourceTree = "<group>"; };
 		AD609CEB20ADD7030069D159 /* SLQuery.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLQuery.h; sourceTree = "<group>"; };
 		AD609CEC20ADD7030069D159 /* SLQuery.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLQuery.m; sourceTree = "<group>"; };
+		AD609CEE20ADE9450069D159 /* UIViewController+Query.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIViewController+Query.h"; sourceTree = "<group>"; };
+		AD609CEF20ADE9450069D159 /* UIViewController+Query.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+Query.m"; sourceTree = "<group>"; };
+		AD609CF120ADEB280069D159 /* UIScrollView+Refresh.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIScrollView+Refresh.h"; sourceTree = "<group>"; };
+		AD609CF220ADEB280069D159 /* UIScrollView+Refresh.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIScrollView+Refresh.m"; sourceTree = "<group>"; };
 		D3A66BD366C9D9D775A7C48F /* Pods-Requests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Requests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Requests/Pods-Requests.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -95,6 +101,10 @@
 				AD4457A620A5461100D4A28E /* Query.m */,
 				AD609CEB20ADD7030069D159 /* SLQuery.h */,
 				AD609CEC20ADD7030069D159 /* SLQuery.m */,
+				AD609CEE20ADE9450069D159 /* UIViewController+Query.h */,
+				AD609CEF20ADE9450069D159 /* UIViewController+Query.m */,
+				AD609CF120ADEB280069D159 /* UIScrollView+Refresh.h */,
+				AD609CF220ADEB280069D159 /* UIScrollView+Refresh.m */,
 				AD44578D20A545C300D4A28E /* AppDelegate.h */,
 				AD44578E20A545C300D4A28E /* AppDelegate.m */,
 				AD44579020A545C300D4A28E /* ViewController.h */,
@@ -220,8 +230,10 @@
 				AD4457A520A545FC00D4A28E /* AFHTTPSessionManager+RACSignal.m in Sources */,
 				AD44579220A545C400D4A28E /* ViewController.m in Sources */,
 				AD44579D20A545C600D4A28E /* main.m in Sources */,
+				AD609CF320ADEB280069D159 /* UIScrollView+Refresh.m in Sources */,
 				AD609CED20ADD7030069D159 /* SLQuery.m in Sources */,
 				AD4457A820A5461200D4A28E /* Query.m in Sources */,
+				AD609CF020ADE9450069D159 /* UIViewController+Query.m in Sources */,
 				AD44578F20A545C300D4A28E /* AppDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
