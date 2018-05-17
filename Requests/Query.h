@@ -16,6 +16,7 @@
 
 #pragma mark - The Builder Part 构造对象
 
+// GET 一般无 body
 @property (nonatomic, readonly) void (^get)(NSString *urlPath, NSDictionary *parameters);
 
 // Content-Type: application/x-www-form-urlencoded
@@ -27,6 +28,13 @@
 // Content-Type: application/json
 // parameters 必须是 NSArray 或 NSDictionary
 @property (nonatomic, readonly) void (^postJson)(NSString *urlPath, id json);
+
+// Content-Type: application/json
+// PUT 只支持 JSON body
+@property (nonatomic, readonly) void (^put)(NSString *urlPath, id json);
+
+// DELETE 一般无 body
+@property (nonatomic, readonly) void (^delete)(NSString *urlPath, NSDictionary *parameters);
 
 @property (nonatomic, readonly) NSMutableDictionary *headers;
 @property (nonatomic, readonly) NSMutableDictionary *parameters;

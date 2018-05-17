@@ -13,6 +13,8 @@
 typedef NS_ENUM(NSInteger, HttpMethod) {
     GET,
     POST,
+    PUT,
+    DELETE,
 };
 
 @interface Query ()
@@ -71,6 +73,22 @@ typedef NS_ENUM(NSInteger, HttpMethod) {
     };
 }
 
+- (void (^)(NSString *, id))put {
+    return ^(NSString *urlPath, id json) {
+        self.urlPath = urlPath;
+        self.method = PUT;
+        self.jsonBody = json;
+    };
+}
+
+- (void (^)(NSString *, NSDictionary *))delete {
+    return ^(NSString *urlPath, NSDictionary *parameters) {
+        self.urlPath = urlPath;
+        self.method = DELETE;
+        [self.parameters addEntriesFromDictionary:parameters];
+    };
+}
+
 + (instancetype)build:(void (^)(Query *))builder {
     id q = [self new];
     builder(q);
@@ -103,22 +121,27 @@ static AFHTTPSessionManager *gManager;
         [manager.requestSerializer setValue:obj forHTTPHeaderField:key];
     }];
 
-    RACSignal *fetch = nil;
-    if (_method == GET) {
-        fetch = [manager GET:_urlPath parameters:_parameters];
-    } else if (_method == POST) {
-        if (_multipartBody) {
-            fetch = [manager POST:_urlPath parameters:_parameters constructingBodyWithBlock:_multipartBody];
-        } else if (_jsonBody) {
-            fetch = [manager POST:_urlPath parameters:_jsonBody];
-        } else {
-            fetch = [manager POST:_urlPath parameters:_parameters];
-        }
-    } else {
-        NSAssert(NO, @"WTF");
-    }
+    switch (_method) {
+        case GET:
+            return [manager GET:_urlPath parameters:_parameters];
 
-    return fetch;
+        case POST:
+            if (_multipartBody) {
+                return [manager POST:_urlPath parameters:_parameters constructingBodyWithBlock:_multipartBody];
+            }
+            if (_jsonBody) {
+                return [manager POST:_urlPath parameters:_jsonBody];
+            }
+            return [manager POST:_urlPath parameters:_parameters];
+
+        case PUT:
+            return [manager PUT:_urlPath parameters:_jsonBody];
+
+        case DELETE:
+            return [manager DELETE:_urlPath parameters:_parameters];
+    }
+    NSAssert(NO, @"WTF");
+    return nil;
 }
 
 - (RACSignal *)send {
