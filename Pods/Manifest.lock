@@ -14,16 +14,25 @@ PODS:
   - AFNetworking/Serialization (3.2.1)
   - AFNetworking/UIKit (3.2.1):
     - AFNetworking/NSURLSession
+  - MJRefresh (3.1.15.3)
   - ReactiveObjC (3.1.0)
 
 DEPENDENCIES:
   - AFNetworking
+  - MJRefresh
   - ReactiveObjC
+
+SPEC REPOS:
+  https://github.com/cocoapods/specs.git:
+    - AFNetworking
+    - MJRefresh
+    - ReactiveObjC
 
 SPEC CHECKSUMS:
   AFNetworking: b6f891fdfaed196b46c7a83cf209e09697b94057
+  MJRefresh: b48380ae2b927b46c4ef000de9adb8dc748e1df7
   ReactiveObjC: 2a38ea15335de4119d8b17caf1db1484f61db902
 
-PODFILE CHECKSUM: 8c26c09498ae3e04f388d457bf765b0d2e608489
+PODFILE CHECKSUM: 0b816f8e90b77005b53e0767509f5e224e409c3e
 
-COCOAPODS: 1.4.0
+COCOAPODS: 1.5.2
