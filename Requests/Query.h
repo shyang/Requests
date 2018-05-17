@@ -16,45 +16,36 @@
 
 #pragma mark - The Builder Part 构造对象
 
-@property (nonatomic, readonly) void (^get)(NSString *urlPath);
-@property (nonatomic, readonly) void (^post)(NSString *urlPath);
-@property (nonatomic, readonly) void (^put)(NSString *urlPath);
-@property (nonatomic, readonly) void (^delete)(NSString *urlPath);
+@property (nonatomic, readonly) void (^get)(NSString *urlPath, NSDictionary *parameters);
 
-/*
- 去除 parameters:(NSDictionary *)parameters 的理由：
- 容易写出这样的代码 parameters:@{key: var} 并且对 var 可能 nil 没有保护，潜在的 crash！
+// Content-Type: application/x-www-form-urlencoded
+@property (nonatomic, readonly) void (^post)(NSString *urlPath, NSDictionary *parameters);
 
- 而 parameters[key] = var; 遇到 nil 时是删除该 pair
- */
+// Content-Type: multipart/form-data
+@property (nonatomic, readonly) void (^postMultipart)(NSString *urlPath, NSDictionary *parameters, void (^block)(id<AFMultipartFormData> formData));
 
-@property (nonatomic, readonly) NSMutableDictionary *parameters;
+// Content-Type: application/json
+// parameters 必须是 NSArray 或 NSDictionary
+@property (nonatomic, readonly) void (^postJson)(NSString *urlPath, id json);
+
 @property (nonatomic, readonly) NSMutableDictionary *headers;
-
-// 缺省 body 的格式为 application/x-www-form-urlencoded
-
-// 设置 body 的格式为 application/json
-// 可传入 NSArray/NSDictionary/NSString 等可被 JSON Serialize 的对象
-@property (nonatomic) id jsonBody;
-
-// 设置 body 的格式为 application/octet-stream
-@property (nonatomic) NSData *rawBody;
-
-// 设置 body 的格式为 multipart/form-data 必须 POST
-@property (nonatomic) void (^multipartBody)(id<AFMultipartFormData> formData);
+@property (nonatomic, readonly) NSMutableDictionary *parameters;
 
 + (instancetype)build:(void (^)(Query *q))builder;
 
 #pragma mark - The Use Part 使用对象
 
 /*
- * 所以请求都需要加入某些 header，如 User-Agent、Authorization:
+ * 所以请求都需要加入某些 header，如 User-Agent:
    新建一个 manager， 设置其 sessionConfiguration.HTTPAdditionalHeaders
+   Authorization 不应使用全局 Header，有安全漏洞，不如 cookie 自动、安全
+
  * 某些 API 返回 image:
    新建一个 manager，修改其 responseSerializer
+
  * 只从 cache 读取:
    新建一个 manager，设置其 sessionConfiguration.requestCachePolicy
- *
+
  */
 - (RACSignal *)send:(AFHTTPSessionManager *)manager;
 
@@ -62,8 +53,6 @@
 - (RACSignal *)send;
 
 #pragma mark - Global Configuration 全局的配置
-// 共享的 adapter，对 response 进行处理
-@property (class, nonatomic) RACSignal *(^adapter)(RACSignal *input);
 
 // 共享的 session manager
 @property (class, nonatomic) AFHTTPSessionManager *manager;

@@ -13,8 +13,6 @@
 typedef NS_ENUM(NSInteger, HttpMethod) {
     GET,
     POST,
-    PUT,
-    DELETE,
 };
 
 @interface Query ()
@@ -24,6 +22,9 @@ typedef NS_ENUM(NSInteger, HttpMethod) {
 
 @property (nonatomic) NSMutableDictionary *parameters;
 @property (nonatomic) NSMutableDictionary *headers;
+
+@property (nonatomic) id jsonBody;
+@property (nonatomic) void (^multipartBody)(id<AFMultipartFormData>);
 
 @end
 
@@ -37,47 +38,43 @@ typedef NS_ENUM(NSInteger, HttpMethod) {
     return self;
 }
 
-- (void (^)(NSString *))get {
-    return ^(NSString *urlPath) {
+- (void (^)(NSString *, NSDictionary *))get {
+    return ^(NSString *urlPath, NSDictionary *parameters) {
         self.urlPath = urlPath;
         self.method = GET;
+        [self.parameters addEntriesFromDictionary:parameters];
     };
 }
 
-- (void (^)(NSString *))post {
-    return ^(NSString *urlPath) {
+- (void (^)(NSString *, NSDictionary *))post {
+    return ^(NSString *urlPath, NSDictionary *parameters) {
         self.urlPath = urlPath;
         self.method = POST;
+        [self.parameters addEntriesFromDictionary:parameters];
     };
 }
 
-- (void (^)(NSString *))put {
-    return ^(NSString *urlPath) {
+- (void (^)(NSString *, id))postJson {
+    return ^(NSString *urlPath, id json) {
         self.urlPath = urlPath;
-        self.method = PUT;
+        self.method = POST;
+        self.jsonBody = json;
     };
 }
 
-- (void (^)(NSString *))delete {
-    return ^(NSString *urlPath) {
+- (void (^)(NSString *, NSDictionary *, void (^)(id<AFMultipartFormData>)))postMultipart {
+    return ^(NSString *urlPath, NSDictionary *parameters, void (^block)(id<AFMultipartFormData>)) {
         self.urlPath = urlPath;
-        self.method = DELETE;
+        self.method = POST;
+        [self.parameters addEntriesFromDictionary:parameters];
+        self.multipartBody = block;
     };
 }
 
 + (instancetype)build:(void (^)(Query *))builder {
-    Query *q = [Query new];
+    id q = [self new];
     builder(q);
     return q;
-}
-
-static RACSignal *(^gAdapter)(RACSignal *input);
-+ (RACSignal *(^)(RACSignal *input))adapter {
-    return gAdapter;
-}
-
-+ (void)setAdapter:(RACSignal *(^)(RACSignal *))adapter {
-    gAdapter = adapter;
 }
 
 static AFHTTPSessionManager *gManager;
@@ -90,33 +87,42 @@ static AFHTTPSessionManager *gManager;
 }
 
 - (RACSignal *)send:(AFHTTPSessionManager *)manager {
-    // _body = [NSJSONSerialization dataWithJSONObject:jsonBody options:0 error:&error];
-
-    RACSignal *fetch = nil;
-    if (_multipartBody) {
-        NSAssert(_method == POST, @"WTF");
-        fetch = [manager POST:_urlPath parameters:_parameters constructingBodyWithBlock:_multipartBody];
-    } else if (_method == GET) {
-        fetch = [manager GET:_urlPath parameters:_parameters];
-    } else if (_method == POST) {
-        fetch = [manager POST:_urlPath parameters:_parameters];
-    } else if (_method == PUT) {
-        fetch = [manager PUT:_urlPath parameters:_parameters];
-    } else if (_method == DELETE) {
-        fetch = [manager DELETE:_urlPath parameters:_parameters];
-    } else {
-        NSAssert(NO, @"WTF");
+    if (!manager) {
+        manager = gManager ?: [AFHTTPSessionManager manager];
     }
 
-    if (gAdapter) {
-        fetch = gAdapter(fetch);
+    if (_jsonBody) {
+        NSCAssert([NSJSONSerialization isValidJSONObject:_jsonBody], @"NSArray or NSDictionary!");
+        NSCAssert(_multipartBody == nil, @"WTF");
+        manager.requestSerializer = [AFJSONRequestSerializer serializer];
+    } else {
+        manager.requestSerializer = [AFHTTPRequestSerializer serializer];
+    }
+
+    [_headers enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+        [manager.requestSerializer setValue:obj forHTTPHeaderField:key];
+    }];
+
+    RACSignal *fetch = nil;
+    if (_method == GET) {
+        fetch = [manager GET:_urlPath parameters:_parameters];
+    } else if (_method == POST) {
+        if (_multipartBody) {
+            fetch = [manager POST:_urlPath parameters:_parameters constructingBodyWithBlock:_multipartBody];
+        } else if (_jsonBody) {
+            fetch = [manager POST:_urlPath parameters:_jsonBody];
+        } else {
+            fetch = [manager POST:_urlPath parameters:_parameters];
+        }
+    } else {
+        NSAssert(NO, @"WTF");
     }
 
     return fetch;
 }
 
 - (RACSignal *)send {
-    return [self send:gManager];
+    return [self send:nil];
 }
 
 @end
