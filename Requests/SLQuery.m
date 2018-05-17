@@ -40,8 +40,8 @@ static RACSignal *retrySignal;
     }
     RACSignal *output = [super send:manager];
 
-    // 定制 2: 全局性地对所有发出的网络请求进行全局性的设置：如认证、解析等
-    return [[output materialize] flattenMap:^(RACEvent *event) {
+    // 定制 2: 全局认证
+    output = [[output materialize] flattenMap:^(RACEvent *event) {
         // [event.error.userInfo[@"result"] isEqualToString:@"login"]
         NSHTTPURLResponse *response = event.error.userInfo[AFNetworkingOperationFailingURLResponseErrorKey];
         if (event.eventType == RACEventTypeError && response.statusCode == 401) {
@@ -56,6 +56,23 @@ static RACSignal *retrySignal;
         }
         return [[RACSignal return:event] dematerialize];
     }];
+
+    // 定制 3: 全局解析
+    if (_modelClass) {
+        output = [output flattenMap:^RACSignal *(id value) {
+            NSArray *body = [value first];
+
+            NSArray *list = body[1];
+            NSError *error = nil;
+            id objects = [MTLJSONAdapter modelsOfClass:self.modelClass fromJSONArray:list error:&error];
+            if (error) {
+                return [RACSignal error:error];
+            }
+            return [RACSignal return:objects];
+        }];
+    }
+
+    return output;
 }
 
 @end

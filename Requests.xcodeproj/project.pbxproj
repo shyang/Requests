@@ -18,6 +18,7 @@
 		AD609CED20ADD7030069D159 /* SLQuery.m in Sources */ = {isa = PBXBuildFile; fileRef = AD609CEC20ADD7030069D159 /* SLQuery.m */; };
 		AD609CF020ADE9450069D159 /* UIViewController+Query.m in Sources */ = {isa = PBXBuildFile; fileRef = AD609CEF20ADE9450069D159 /* UIViewController+Query.m */; };
 		AD609CF320ADEB280069D159 /* UIScrollView+Refresh.m in Sources */ = {isa = PBXBuildFile; fileRef = AD609CF220ADEB280069D159 /* UIScrollView+Refresh.m */; };
+		AD609CF920ADFC500069D159 /* Country.m in Sources */ = {isa = PBXBuildFile; fileRef = AD609CF820ADFC500069D159 /* Country.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -42,6 +43,8 @@
 		AD609CEF20ADE9450069D159 /* UIViewController+Query.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+Query.m"; sourceTree = "<group>"; };
 		AD609CF120ADEB280069D159 /* UIScrollView+Refresh.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIScrollView+Refresh.h"; sourceTree = "<group>"; };
 		AD609CF220ADEB280069D159 /* UIScrollView+Refresh.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIScrollView+Refresh.m"; sourceTree = "<group>"; };
+		AD609CF720ADFC500069D159 /* Country.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Country.h; sourceTree = "<group>"; };
+		AD609CF820ADFC500069D159 /* Country.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Country.m; sourceTree = "<group>"; };
 		D3A66BD366C9D9D775A7C48F /* Pods-Requests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Requests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Requests/Pods-Requests.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -105,6 +108,8 @@
 				AD609CEF20ADE9450069D159 /* UIViewController+Query.m */,
 				AD609CF120ADEB280069D159 /* UIScrollView+Refresh.h */,
 				AD609CF220ADEB280069D159 /* UIScrollView+Refresh.m */,
+				AD609CF720ADFC500069D159 /* Country.h */,
+				AD609CF820ADFC500069D159 /* Country.m */,
 				AD44578D20A545C300D4A28E /* AppDelegate.h */,
 				AD44578E20A545C300D4A28E /* AppDelegate.m */,
 				AD44579020A545C300D4A28E /* ViewController.h */,
@@ -234,6 +239,7 @@
 				AD609CED20ADD7030069D159 /* SLQuery.m in Sources */,
 				AD4457A820A5461200D4A28E /* Query.m in Sources */,
 				AD609CF020ADE9450069D159 /* UIViewController+Query.m in Sources */,
+				AD609CF920ADFC500069D159 /* Country.m in Sources */,
 				AD44578F20A545C300D4A28E /* AppDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

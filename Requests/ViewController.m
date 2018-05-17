@@ -10,6 +10,7 @@
 #import "SLQuery.h"
 #import "UIViewController+Query.h"
 #import "UIScrollView+Refresh.h"
+#import "Country.h"
 
 @interface ViewController ()
 
@@ -29,11 +30,12 @@
                @"POST application/x-www-form-urlencoded",
                @"PUT application/json",
                @"DELETE ?query-string",
+               @"Parse by Mantle"
                ];
     [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:NSStringFromClass([UITableViewCell class])];
 
     RACCommand *cmd = [self commandWithQuery:[Query build:^(Query *q) {
-        q.get(@"http://api.worldbank.org/v2/topics?format=json&per_page=10", nil);
+        q.get(@"http://api.worldbank.org/v2/topics", @{@"format": @"json", @"per_page": @"10"});
     }]];
     [[self.tableView showHeaderAndFooterWithCommand:cmd] subscribeNext:^(id x) {
         NSLog(@"pull header ok %@", x);
@@ -115,6 +117,15 @@
     } else if (indexPath.row == 6) {
         [[[Query build:^(Query *q) {
             q.delete(@"http://httpbin.org/delete", @{@"11": @"bb", @"12": @"dd"});
+        }] send] subscribeNext:^(id x) {
+            NSLog(@"ok: %@", x);
+        } error:^(NSError *error) {
+            NSLog(@"err: %@", error);
+        }];
+    } else if (indexPath.row == 7) {
+        [[[SLQuery build:^(SLQuery *q) {
+            q.get(@"http://api.worldbank.org/v2/countries", @{@"format": @"json"});
+            q.modelClass = [Country class];
         }] send] subscribeNext:^(id x) {
             NSLog(@"ok: %@", x);
         } error:^(NSError *error) {
