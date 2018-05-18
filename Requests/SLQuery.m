@@ -33,6 +33,12 @@ static RACSignal *retrySignal;
     }];
 }
 
++ (instancetype)build:(void (^)(SLQuery *))builder {
+    id q = [self new];
+    builder(q);
+    return q;
+}
+
 - (RACSignal *)send:(AFHTTPSessionManager *)manager {
     if (!manager) {
         // 定制 1: 覆盖全局 manager

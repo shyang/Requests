@@ -19,6 +19,10 @@
 
 @implementation ViewController
 
+- (void)dealloc {
+    NSLog(@"dealloc %@", self);
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
 

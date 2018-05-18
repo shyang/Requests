@@ -20,6 +20,7 @@
 		AD609CF320ADEB280069D159 /* UIScrollView+Refresh.m in Sources */ = {isa = PBXBuildFile; fileRef = AD609CF220ADEB280069D159 /* UIScrollView+Refresh.m */; };
 		AD609CF920ADFC500069D159 /* Country.m in Sources */ = {isa = PBXBuildFile; fileRef = AD609CF820ADFC500069D159 /* Country.m */; };
 		AD609CFC20ADFECE0069D159 /* CountriesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AD609CFB20ADFECE0069D159 /* CountriesViewController.m */; };
+		AD609CFF20AE02650069D159 /* EmptyViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AD609CFE20AE02650069D159 /* EmptyViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -48,6 +49,8 @@
 		AD609CF820ADFC500069D159 /* Country.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Country.m; sourceTree = "<group>"; };
 		AD609CFA20ADFECE0069D159 /* CountriesViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CountriesViewController.h; sourceTree = "<group>"; };
 		AD609CFB20ADFECE0069D159 /* CountriesViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CountriesViewController.m; sourceTree = "<group>"; };
+		AD609CFD20AE02650069D159 /* EmptyViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EmptyViewController.h; sourceTree = "<group>"; };
+		AD609CFE20AE02650069D159 /* EmptyViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EmptyViewController.m; sourceTree = "<group>"; };
 		D3A66BD366C9D9D775A7C48F /* Pods-Requests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Requests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Requests/Pods-Requests.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -119,6 +122,8 @@
 				AD44578E20A545C300D4A28E /* AppDelegate.m */,
 				AD44579020A545C300D4A28E /* ViewController.h */,
 				AD44579120A545C300D4A28E /* ViewController.m */,
+				AD609CFD20AE02650069D159 /* EmptyViewController.h */,
+				AD609CFE20AE02650069D159 /* EmptyViewController.m */,
 				AD44579620A545C600D4A28E /* Assets.xcassets */,
 				AD44579820A545C600D4A28E /* LaunchScreen.storyboard */,
 				AD44579B20A545C600D4A28E /* Info.plist */,
@@ -237,6 +242,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AD609CFF20AE02650069D159 /* EmptyViewController.m in Sources */,
 				AD4457A520A545FC00D4A28E /* AFHTTPSessionManager+RACSignal.m in Sources */,
 				AD44579220A545C400D4A28E /* ViewController.m in Sources */,
 				AD44579D20A545C600D4A28E /* main.m in Sources */,

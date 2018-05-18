@@ -16,7 +16,7 @@
 
 + (Query *)getAllContries {
     return [SLQuery build:^(SLQuery *q) {
-        q.get(@"http://api.worldbank.org/v2/countries", @{@"format": @"json"});
+        q.get(@"http://api.worldbank.org/v2/countries", @{@"format": @"json", @"per_page": @"100"});
         q.modelClass = [Country class];
     }];
 }

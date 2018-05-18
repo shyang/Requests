@@ -7,7 +7,7 @@
 //
 
 #import "AppDelegate.h"
-#import "ViewController.h"
+#import "EmptyViewController.h"
 
 @interface AppDelegate ()
 
@@ -17,7 +17,7 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     _window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
-    _window.rootViewController = [[UINavigationController alloc] initWithRootViewController:[ViewController new]];
+    _window.rootViewController = [[UINavigationController alloc] initWithRootViewController:[EmptyViewController new]];
     _window.backgroundColor = [UIColor greenColor];
     [_window makeKeyAndVisible];
     return YES;
