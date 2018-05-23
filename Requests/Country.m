@@ -7,6 +7,7 @@
 //
 
 #import "Country.h"
+#import "AFHTTPSessionManager+RACSignal.h"
 
 @implementation Country
 
@@ -14,9 +15,10 @@
     return [NSDictionary mtl_identityPropertyMapWithModel:self];
 }
 
-+ (Query *)getAllContries {
-    return [SLQuery build:^(SLQuery *q) {
-        q.get(@"http://api.worldbank.org/v2/countries", @{@"format": @"json", @"per_page": @"100"});
++ (RACSignal *)getAllContries {
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
+    return [manager GET:@"http://api.worldbank.org/v2/countries" config:^(Query *q) {
+        [q.parameters addEntriesFromDictionary:@{@"format": @"json", @"per_page": @"100"}];
         q.modelClass = [Country class];
     }];
 }

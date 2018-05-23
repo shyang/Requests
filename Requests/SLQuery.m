@@ -31,54 +31,41 @@ static RACSignal *retrySignal;
         }];
         return nil;
     }];
-}
 
-+ (instancetype)build:(void (^)(SLQuery *))builder {
-    id q = [self new];
-    builder(q);
-    return q;
-}
+    Query.interceptor = ^RACSignal *(Query *input, RACSignal *output) {
+        // 定制 2: 全局认证
+        output = [[output materialize] flattenMap:^(RACEvent *event) {
+            // [event.error.userInfo[@"result"] isEqualToString:@"login"]
+            NSHTTPURLResponse *response = event.error.userInfo[AFNetworkingOperationFailingURLResponseErrorKey];
+            if (event.eventType == RACEventTypeError && response.statusCode == 401) {
+                return [retrySignal flattenMap:^RACSignal *(id value) {
+                    // 成功登录后，再试一次刚才的请求。
+                    if ([value count]) {
+                        [input.headers addEntriesFromDictionary:value];
+                        return [input send:input.manager];
+                    }
+                    return [RACSignal error:event.error];
+                }];
+            }
+            return [[RACSignal return:event] dematerialize];
+        }];
 
-- (RACSignal *)send:(AFHTTPSessionManager *)manager {
-    if (!manager) {
-        // 定制 1: 覆盖全局 manager
-        manager = [AFHTTPSessionManager manager];
-    }
-    RACSignal *output = [super send:manager];
-
-    // 定制 2: 全局认证
-    output = [[output materialize] flattenMap:^(RACEvent *event) {
-        // [event.error.userInfo[@"result"] isEqualToString:@"login"]
-        NSHTTPURLResponse *response = event.error.userInfo[AFNetworkingOperationFailingURLResponseErrorKey];
-        if (event.eventType == RACEventTypeError && response.statusCode == 401) {
-            return [retrySignal flattenMap:^RACSignal *(id value) {
-                // 成功登录后，再试一次刚才的请求。
-                if ([value count]) {
-                    [self.headers addEntriesFromDictionary:value];
-                    return [super send:manager];
+        // 定制 3: 全局解析
+        if (input.modelClass) {
+            output = [output flattenMap:^RACSignal *(RACTuple *value) {
+                NSArray *body = [value first];
+                NSDictionary *cursor = body[0];
+                NSArray *list = body[1];
+                NSError *error = nil;
+                id objects = [MTLJSONAdapter modelsOfClass:input.modelClass fromJSONArray:list error:&error];
+                if (error) {
+                    return [RACSignal error:error];
                 }
-                return [RACSignal error:event.error];
+                return [RACSignal return:RACTuplePack(objects, cursor, value.third)];
             }];
         }
-        return [[RACSignal return:event] dematerialize];
-    }];
-
-    // 定制 3: 全局解析，此处扔掉了 value.second 即 NSHTTPURLResponse
-    if (_modelClass) {
-        output = [output flattenMap:^RACSignal *(id value) {
-            NSArray *body = [value first];
-            NSDictionary *cursor = body[0];
-            NSArray *list = body[1];
-            NSError *error = nil;
-            id objects = [MTLJSONAdapter modelsOfClass:self.modelClass fromJSONArray:list error:&error];
-            if (error) {
-                return [RACSignal error:error];
-            }
-            return [RACSignal return:@[cursor, objects]];
-        }];
-    }
-
-    return output;
+        return output;
+    };
 }
 
 @end

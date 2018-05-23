@@ -10,12 +10,6 @@
 
 #import "Query.h"
 
-typedef NS_ENUM(NSInteger, HttpMethod) {
-    GET,
-    POST,
-    PUT,
-    DELETE,
-};
 
 @interface Query ()
 
@@ -24,115 +18,96 @@ typedef NS_ENUM(NSInteger, HttpMethod) {
 
 @property (nonatomic) NSMutableDictionary *parameters;
 @property (nonatomic) NSMutableDictionary *headers;
-
-@property (nonatomic) id jsonBody;
-@property (nonatomic) void (^multipartBody)(id<AFMultipartFormData>);
+@property (nonatomic) void (^block)(id<AFMultipartFormData>);
 
 @end
 
 @implementation Query
 
-- (instancetype)init {
+- (instancetype)initWithMethod:(HttpMethod)method urlPath:(NSString *)urlPath {
     if (self = [super init]) {
+        _method = method;
+        _urlPath = urlPath;
         _parameters = [NSMutableDictionary new];
         _headers = [NSMutableDictionary new];
+        _responseEncoding = NSUTF8StringEncoding;
+        _responseType = JSON;
     }
     return self;
 }
 
-- (void (^)(NSString *, NSDictionary *))get {
-    return ^(NSString *urlPath, NSDictionary *parameters) {
-        self.urlPath = urlPath;
-        self.method = GET;
-        [self.parameters addEntriesFromDictionary:parameters];
+- (void)dealloc {
+    NSLog(@"dealloc %@", self);
+}
+
+static RACSignal *(^_interceptor)(Query *input, RACSignal *output);
++ (RACSignal *(^)(Query *, RACSignal *))interceptor {
+    return _interceptor;
+}
+
++ (void)setInterceptor:(RACSignal *(^)(Query *, RACSignal *))interceptor {
+    _interceptor = interceptor;
+}
+
+- (void (^)(void (^)(id<AFMultipartFormData>)))multipartBody {
+    return ^(void (^block)(id<AFMultipartFormData>)) {
+        self.block = block;
     };
 }
 
-- (void (^)(NSString *, NSDictionary *))post {
-    return ^(NSString *urlPath, NSDictionary *parameters) {
-        self.urlPath = urlPath;
-        self.method = POST;
-        [self.parameters addEntriesFromDictionary:parameters];
-    };
-}
+- (RACSignal *)send:(AFHTTPSessionManager *)aManager {
+    // RACSignal body 包含的操作越多，其被 re-subscribe 时，重复执行的操作也越多
+    RACSignal *output = [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
+        AFHTTPSessionManager *manager = aManager ?: [AFHTTPSessionManager manager];
 
-- (void (^)(NSString *, id))postJson {
-    return ^(NSString *urlPath, id json) {
-        self.urlPath = urlPath;
-        self.method = POST;
-        self.jsonBody = json;
-    };
-}
+        if (self.jsonBody) {
+            NSCAssert([NSJSONSerialization isValidJSONObject:self.jsonBody], @"NSArray or NSDictionary!");
+            NSCAssert(self.block == nil, @"WTF");
+            manager.requestSerializer = [AFJSONRequestSerializer serializer];
+        } else {
+            manager.requestSerializer = [AFHTTPRequestSerializer serializer];
+        }
 
-- (void (^)(NSString *, NSDictionary *, void (^)(id<AFMultipartFormData>)))postMultipart {
-    return ^(NSString *urlPath, NSDictionary *parameters, void (^block)(id<AFMultipartFormData>)) {
-        self.urlPath = urlPath;
-        self.method = POST;
-        [self.parameters addEntriesFromDictionary:parameters];
-        self.multipartBody = block;
-    };
-}
+        [self.headers enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+            [manager.requestSerializer setValue:obj forHTTPHeaderField:key];
+        }];
 
-- (void (^)(NSString *, id))put {
-    return ^(NSString *urlPath, id json) {
-        self.urlPath = urlPath;
-        self.method = PUT;
-        self.jsonBody = json;
-    };
-}
+        void (^ok)(NSURLSessionDataTask *, id) = ^(NSURLSessionDataTask *task, id responseObject) {
+            [subscriber sendNext:RACTuplePack(responseObject, task.response, self)];
+            [subscriber sendCompleted];
+        };
+        void (^err)(NSURLSessionDataTask *, NSError *) = ^(NSURLSessionDataTask *task, NSError *error) {
+            [subscriber sendError:error];
+        };
 
-- (void (^)(NSString *, NSDictionary *))delete {
-    return ^(NSString *urlPath, NSDictionary *parameters) {
-        self.urlPath = urlPath;
-        self.method = DELETE;
-        [self.parameters addEntriesFromDictionary:parameters];
-    };
-}
+        NSURLSessionDataTask *task = nil;
+        switch (self.method) {
+            case GET:
+                task = [manager GET:self.urlPath parameters:self.parameters progress:nil success:ok failure:err];
+                break;
+            case POST:
+                if (self.block) {
+                    task = [manager POST:self.urlPath parameters:self.parameters constructingBodyWithBlock:self.block progress:nil success:ok failure:err];
+                } else if (self.jsonBody) {
+                    task = [manager POST:self.urlPath parameters:self.jsonBody progress:nil success:ok failure:err];
+                } else {
+                    task = [manager POST:self.urlPath parameters:self.parameters progress:nil success:ok failure:err];
+                }
+                break;
+            case PUT:
+                task = [manager PUT:self.urlPath parameters:self.jsonBody success:ok failure:err];
+                break;
+            case DELETE:
+                task = [manager DELETE:self.urlPath parameters:self.parameters success:ok failure:err];
+                break;
+        }
 
-+ (instancetype)build:(void (^)(Query *))builder {
-    id q = [self new];
-    builder(q);
-    return q;
-}
-
-- (RACSignal *)send:(AFHTTPSessionManager *)manager {
-    if (!manager) {
-        manager = [AFHTTPSessionManager manager];
-    }
-
-    if (_jsonBody) {
-        NSCAssert([NSJSONSerialization isValidJSONObject:_jsonBody], @"NSArray or NSDictionary!");
-        NSCAssert(_multipartBody == nil, @"WTF");
-        manager.requestSerializer = [AFJSONRequestSerializer serializer];
-    } else {
-        manager.requestSerializer = [AFHTTPRequestSerializer serializer];
-    }
-
-    [_headers enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
-        [manager.requestSerializer setValue:obj forHTTPHeaderField:key];
+        return [RACDisposable disposableWithBlock:^{
+            [task cancel];
+        }];
     }];
 
-    switch (_method) {
-        case GET:
-            return [manager GET:_urlPath parameters:_parameters];
-
-        case POST:
-            if (_multipartBody) {
-                return [manager POST:_urlPath parameters:_parameters constructingBodyWithBlock:_multipartBody];
-            }
-            if (_jsonBody) {
-                return [manager POST:_urlPath parameters:_jsonBody];
-            }
-            return [manager POST:_urlPath parameters:_parameters];
-
-        case PUT:
-            return [manager PUT:_urlPath parameters:_jsonBody];
-
-        case DELETE:
-            return [manager DELETE:_urlPath parameters:_parameters];
-    }
-    NSAssert(NO, @"WTF");
-    return nil;
+    return _interceptor ? _interceptor(self, output) : output;
 }
 
 - (RACSignal *)send {

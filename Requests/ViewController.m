@@ -10,6 +10,7 @@
 #import "SLQuery.h"
 #import "CountriesViewController.h"
 #import "Country.h"
+#import "AFHTTPSessionManager+RACSignal.h"
 
 @interface ViewController ()
 
@@ -51,73 +52,75 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:NO];
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
     if (indexPath.row == 0) {
         /*
          basic auth 会触发 URLSession:task:didReceiveChallenge:completionHandler:
          AFN 会再发起一次重复网络请求
          https://forums.developer.apple.com/thread/39293
          */
-        [[[SLQuery build:^(Query *q) {
-            q.get(@"http://httpbin.org/basic-auth/demo/demo", nil);
-        }] send] subscribeNext:^(id x) {
-            NSLog(@"ok: %@", x);
+        [[manager GET:@"http://httpbin.org/basic-auth/demo/demo" config:nil] subscribeNext:^(id x) {
+            NSLog(@"ok: %@", [x first]);
         } error:^(NSError * _Nullable error) {
             NSLog(@"err: %@", error);
         }];
     } else if (indexPath.row == 1) {
-        [[[Query build:^(Query *q) {
-            q.get(@"http://httpbin.org/get", @{@"1": @"bb", @"2": @"dd"});
-        }] send] subscribeNext:^(id x) {
-            NSLog(@"ok: %@", x);
+        [[manager GET:@"http://httpbin.org/get" config:^(Query *q) {
+            [q.parameters addEntriesFromDictionary:@{@"1": @"bb", @"2": @"dd"}];
+        }] subscribeNext:^(id x) {
+            NSLog(@"ok: %@", [x first]);
         } error:^(NSError *error) {
             NSLog(@"err: %@", error);
         }];
     } else if (indexPath.row == 2) {
-        [[[Query build:^(Query *q) {
-            q.postMultipart(@"http://httpbin.org/post", @{@"3": @"bb", @"4": @"dd"}, ^(id<AFMultipartFormData> formData) {
+        [[manager POST:@"http://httpbin.org/post" config:^(Query *q) {
+            [q.parameters addEntriesFromDictionary:@{@"3": @"bb", @"4": @"dd"}];
+            q.multipartBody(^(id<AFMultipartFormData> formData) {
                 NSURL *url = [[NSBundle mainBundle] URLForResource:@"Info" withExtension:@"plist"];
                 NSData *d = [NSData dataWithContentsOfURL:url];
                 [formData appendPartWithFormData:d name:@"m3"];
             });
-        }] send] subscribeNext:^(id x) {
-            NSLog(@"ok: %@", x);
+        }] subscribeNext:^(id x) {
+            NSLog(@"ok: %@", [x first]);
         } error:^(NSError *error) {
             NSLog(@"err: %@", error);
         }];
     } else if (indexPath.row == 3) {
-        [[[Query build:^(Query *q) {
-            q.postJson(@"http://httpbin.org/post", @{@"5": @"bb", @"6": @"dd"});
-        }] send] subscribeNext:^(id x) {
-            NSLog(@"ok: %@", x);
+        [[manager POST:@"http://httpbin.org/post" config:^(Query *q) {
+            q.jsonBody = @{@"5": @"bb", @"6": @"dd"};
+        }] subscribeNext:^(id x) {
+            NSLog(@"ok: %@", [x first]);
         } error:^(NSError *error) {
             NSLog(@"err: %@", error);
         }];
     } else if (indexPath.row == 4) {
-        [[[Query build:^(Query *q) {
-            q.post(@"http://httpbin.org/post", @{@"7": @"bb", @"8": @"dd"});
-        }] send] subscribeNext:^(id x) {
-            NSLog(@"ok: %@", x);
+        [[manager POST:@"http://httpbin.org/post" config:^(Query *q) {
+            [q.parameters addEntriesFromDictionary:@{@"7": @"bb", @"8": @"dd"}];
+        }] subscribeNext:^(id x) {
+            NSLog(@"ok: %@", [x first]);
         } error:^(NSError *error) {
             NSLog(@"err: %@", error);
         }];
     } else if (indexPath.row == 5) {
-        [[[Query build:^(Query *q) {
-            q.put(@"http://httpbin.org/put", @{@"9": @"bb", @"10": @"dd"});
-        }] send] subscribeNext:^(id x) {
-            NSLog(@"ok: %@", x);
+        [[manager PUT:@"http://httpbin.org/put" config:^(Query *q) {
+            q.jsonBody = @{@"9": @"bb", @"10": @"dd"};
+        }] subscribeNext:^(id x) {
+            NSLog(@"ok: %@", [x first]);
         } error:^(NSError *error) {
             NSLog(@"err: %@", error);
         }];
     } else if (indexPath.row == 6) {
-        [[[Query build:^(Query *q) {
-            q.delete(@"http://httpbin.org/delete", @{@"11": @"bb", @"12": @"dd"});
-        }] send] subscribeNext:^(id x) {
-            NSLog(@"ok: %@", x);
+        RACSignal *a = [manager DELETE:@"http://httpbin.org/delete" config:^(Query *q) {
+            [q.parameters addEntriesFromDictionary:@{@"11": @"bb", @"12": @"dd"}];
+        }];
+
+        [a subscribeNext:^(id x) {
+            NSLog(@"ok: %@", [x first]);
         } error:^(NSError *error) {
             NSLog(@"err: %@", error);
         }];
     } else if (indexPath.row == 7) {
-        [[[Country getAllContries] send] subscribeNext:^(id x) {
+        [[Country getAllContries] subscribeNext:^(id x) {
             NSLog(@"ok: %@", x);
         } error:^(NSError *error) {
             NSLog(@"err: %@", error);

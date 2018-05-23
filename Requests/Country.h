@@ -16,6 +16,6 @@
 @property (nonatomic) NSString *name;
 @property (nonatomic) NSString *iso2Code;
 
-+ (Query *)getAllContries;
++ (RACSignal *)getAllContries;
 
 @end

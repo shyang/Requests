@@ -7,7 +7,6 @@
 //
 
 #import "CountriesViewController.h"
-#import "UIViewController+Query.h"
 #import "UIScrollView+Refresh.h"
 #import "Country.h"
 
@@ -33,16 +32,17 @@
     [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:NSStringFromClass([UITableViewCell class])];
 
     // 一次性的数据设置：包括第一次加载
-    RACCommand *cmd = [self commandWithQuery:[Country getAllContries]];
     @weakify(self);
-    [[self.tableView showHeaderAndFooterWithCommand:cmd] subscribeNext:^(id x) {
-        @strongify(self)
-        // 根据数据调整UI
-        self.items = x;
-        [self.tableView reloadData];
-    }];
-    [cmd.errors subscribeNext:^(NSError *x) {
-        NSLog(@"pull header err %@", x);
+    [self.tableView showHeaderAndFooter:[Country getAllContries] output:^(RACSignal *values, RACSignal *errors) {
+        [values subscribeNext:^(RACTuple *x) {
+            @strongify(self)
+            // 根据数据调整UI
+            self.items = x.first;
+            [self.tableView reloadData];
+        }];
+        [errors subscribeNext:^(id  _Nullable x) {
+            NSLog(@"pull header err %@", x);
+        }];
     }];
 }
 

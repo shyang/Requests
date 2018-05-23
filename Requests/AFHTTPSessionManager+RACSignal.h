@@ -1,21 +1,21 @@
 //
 //  AFHTTPSessionManager+RACSignal.h
-//  DRLender
+//  Requests
 //
-//  Created by shaohua on 3/9/16.
-//  Copyright © 2016 syang. All rights reserved.
+//  Created by shaohua on 2018/5/24.
+//  Copyright © 2018 syang. All rights reserved.
 //
 
-#import <AFNetworking/AFNetworking.h>
-#import <ReactiveObjC/ReactiveObjC.h>
+#import "AFHTTPSessionManager.h"
+#import "Query.h"
 
 @interface AFHTTPSessionManager (RACSignal)
 
-- (RACSignal *)GET:(NSString *)path parameters:(id)parameters;
-- (RACSignal *)POST:(NSString *)path parameters:(id)parameters;
-- (RACSignal *)POST:(NSString *)path parameters:(id)parameters constructingBodyWithBlock:(void (^)(id<AFMultipartFormData> formData))block;
-- (RACSignal *)PUT:(NSString *)path parameters:(id)parameters;
-- (RACSignal *)DELETE:(NSString *)path parameters:(id)parameters;
-- (RACSignal *)HEAD:(NSString *)path parameters:(id)parameters;
+// Query 是一个 value object，封装了一个 request 的所有输入、输出
+
+- (RACSignal *)GET:(NSString *)urlPath config:(void (^)(Query *q))config;
+- (RACSignal *)POST:(NSString *)urlPath config:(void (^)(Query *q))config;
+- (RACSignal *)PUT:(NSString *)urlPath config:(void (^)(Query *q))config;
+- (RACSignal *)DELETE:(NSString *)urlPath config:(void (^)(Query *q))config;
 
 @end

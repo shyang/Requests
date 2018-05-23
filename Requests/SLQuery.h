@@ -10,10 +10,6 @@
 
 #import "Query.h"
 
-@interface SLQuery : Query
-
-@property (nonatomic) Class modelClass;
-
-+ (instancetype)build:(void (^)(SLQuery *))builder;
+@interface SLQuery : NSObject
 
 @end
