@@ -36,6 +36,7 @@
                @"DELETE ?query-string",
                @"Parse by Mantle",
                @"Pull to refresh",
+               @"GET 500",
                ];
     [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:NSStringFromClass([UITableViewCell class])];
 }
@@ -110,11 +111,9 @@
             NSLog(@"err: %@", error);
         }];
     } else if (indexPath.row == 6) {
-        RACSignal *a = [manager DELETE:@"http://httpbin.org/delete" config:^(Query *q) {
+        [[manager DELETE:@"http://httpbin.org/delete" config:^(Query *q) {
             [q.parameters addEntriesFromDictionary:@{@"11": @"bb", @"12": @"dd"}];
-        }];
-
-        [a subscribeNext:^(id x) {
+        }] subscribeNext:^(id x) {
             NSLog(@"ok: %@", [x first]);
         } error:^(NSError *error) {
             NSLog(@"err: %@", error);
@@ -127,6 +126,12 @@
         }];
     } else if (indexPath.row == 8) {
         [self.navigationController pushViewController:[CountriesViewController new] animated:YES];
+    } else if (indexPath.row == 9) {
+        [[manager GET:@"http://httpbin.org/status/500" config:nil] subscribeNext:^(id x) {
+            NSLog(@"ok: %@", x);
+        } error:^(NSError *error) {
+            NSLog(@"err: %@", error);
+        }];
     }
 }
 

@@ -44,7 +44,6 @@ typedef NS_ENUM(NSInteger, ResponseType) {
 @property (class, nonatomic) RACSignal *(^interceptor)(Query *input, RACSignal *output);
 
 #pragma mark - The Use Part 使用对象
-- (RACSignal *)send:(AFHTTPSessionManager *)manager;
 - (RACSignal *)send;
 
 /*

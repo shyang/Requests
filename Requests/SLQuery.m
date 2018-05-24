@@ -7,6 +7,7 @@
 //
 
 #import "SLQuery.h"
+#import "NSError+AFNetworking.h"
 
 @implementation SLQuery
 
@@ -36,13 +37,13 @@ static RACSignal *retrySignal;
         // 定制 2: 全局认证
         output = [[output materialize] flattenMap:^(RACEvent *event) {
             // [event.error.userInfo[@"result"] isEqualToString:@"login"]
-            NSHTTPURLResponse *response = event.error.userInfo[AFNetworkingOperationFailingURLResponseErrorKey];
+            NSHTTPURLResponse *response = event.error.response;
             if (event.eventType == RACEventTypeError && response.statusCode == 401) {
                 return [retrySignal flattenMap:^RACSignal *(id value) {
                     // 成功登录后，再试一次刚才的请求。
                     if ([value count]) {
                         [input.headers addEntriesFromDictionary:value];
-                        return [input send:input.manager];
+                        return output;
                     }
                     return [RACSignal error:event.error];
                 }];

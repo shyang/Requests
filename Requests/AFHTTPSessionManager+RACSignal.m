@@ -15,7 +15,8 @@
     if (config) {
         config(query);
     }
-    return [query send:self];
+    query.manager = self;
+    return [query send];
 }
 
 - (RACSignal *)GET:(NSString *)urlPath config:(void (^)(Query *))config {

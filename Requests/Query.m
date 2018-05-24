@@ -10,7 +10,6 @@
 
 #import "Query.h"
 
-
 @interface Query ()
 
 @property (nonatomic) HttpMethod method;
@@ -55,10 +54,10 @@ static RACSignal *(^_interceptor)(Query *input, RACSignal *output);
     };
 }
 
-- (RACSignal *)send:(AFHTTPSessionManager *)aManager {
+- (RACSignal *)send {
     // RACSignal body 包含的操作越多，其被 re-subscribe 时，重复执行的操作也越多
     RACSignal *output = [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
-        AFHTTPSessionManager *manager = aManager ?: [AFHTTPSessionManager manager];
+        AFHTTPSessionManager *manager = self.manager ?: [AFHTTPSessionManager manager];
 
         if (self.jsonBody) {
             NSCAssert([NSJSONSerialization isValidJSONObject:self.jsonBody], @"NSArray or NSDictionary!");
@@ -108,10 +107,6 @@ static RACSignal *(^_interceptor)(Query *input, RACSignal *output);
     }];
 
     return _interceptor ? _interceptor(self, output) : output;
-}
-
-- (RACSignal *)send {
-    return [self send:nil];
 }
 
 @end
