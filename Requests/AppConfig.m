@@ -6,15 +6,23 @@
 //  Copyright © 2018 syang. All rights reserved.
 //
 
-#import "SLQuery.h"
+#import <Mantle/Mantle.h>
+
+#import "AppConfig.h"
 #import "NSError+AFNetworking.h"
+#import "Query.h"
 
-@implementation SLQuery
-
-static RACSignal *retrySignal;
+@implementation AppConfig
 
 + (void)load {
-    retrySignal = [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        [self setupInteceptor];
+    });
+}
+
++ (void)setupInteceptor {
+    RACSignal *retrySignal = [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
         UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Auth" message:nil preferredStyle:UIAlertControllerStyleAlert];
         [alert addTextFieldWithConfigurationHandler:^(UITextField *textField) {
 

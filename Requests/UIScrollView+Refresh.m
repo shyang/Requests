@@ -6,8 +6,8 @@
 //  Copyright © 2018 syang. All rights reserved.
 //
 
-#import "UIScrollView+Refresh.h"
 #import "Query.h"
+#import "UIScrollView+Refresh.h"
 
 @implementation UIScrollView (Refresh)
 

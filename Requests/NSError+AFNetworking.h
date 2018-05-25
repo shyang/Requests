@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+
 #import "Query.h"
 
 @interface NSError (AFNetworking)

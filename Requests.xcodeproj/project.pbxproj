@@ -15,7 +15,7 @@
 		AD44579A20A545C600D4A28E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AD44579820A545C600D4A28E /* LaunchScreen.storyboard */; };
 		AD44579D20A545C600D4A28E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = AD44579C20A545C600D4A28E /* main.m */; };
 		AD4457A820A5461200D4A28E /* Query.m in Sources */ = {isa = PBXBuildFile; fileRef = AD4457A620A5461100D4A28E /* Query.m */; };
-		AD609CED20ADD7030069D159 /* SLQuery.m in Sources */ = {isa = PBXBuildFile; fileRef = AD609CEC20ADD7030069D159 /* SLQuery.m */; };
+		AD609CED20ADD7030069D159 /* AppConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = AD609CEC20ADD7030069D159 /* AppConfig.m */; };
 		AD609CF320ADEB280069D159 /* UIScrollView+Refresh.m in Sources */ = {isa = PBXBuildFile; fileRef = AD609CF220ADEB280069D159 /* UIScrollView+Refresh.m */; };
 		AD609CF920ADFC500069D159 /* Country.m in Sources */ = {isa = PBXBuildFile; fileRef = AD609CF820ADFC500069D159 /* Country.m */; };
 		AD609CFC20ADFECE0069D159 /* CountriesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AD609CFB20ADFECE0069D159 /* CountriesViewController.m */; };
@@ -39,8 +39,8 @@
 		AD44579C20A545C600D4A28E /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		AD4457A620A5461100D4A28E /* Query.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Query.m; sourceTree = "<group>"; };
 		AD4457A720A5461100D4A28E /* Query.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Query.h; sourceTree = "<group>"; };
-		AD609CEB20ADD7030069D159 /* SLQuery.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLQuery.h; sourceTree = "<group>"; };
-		AD609CEC20ADD7030069D159 /* SLQuery.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLQuery.m; sourceTree = "<group>"; };
+		AD609CEB20ADD7030069D159 /* AppConfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppConfig.h; sourceTree = "<group>"; };
+		AD609CEC20ADD7030069D159 /* AppConfig.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppConfig.m; sourceTree = "<group>"; };
 		AD609CF120ADEB280069D159 /* UIScrollView+Refresh.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIScrollView+Refresh.h"; sourceTree = "<group>"; };
 		AD609CF220ADEB280069D159 /* UIScrollView+Refresh.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIScrollView+Refresh.m"; sourceTree = "<group>"; };
 		AD609CF720ADFC500069D159 /* Country.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Country.h; sourceTree = "<group>"; };
@@ -110,8 +110,8 @@
 				AD9F94B220B6CE9000D4A28E /* NSError+AFNetworking.m */,
 				AD4457A720A5461100D4A28E /* Query.h */,
 				AD4457A620A5461100D4A28E /* Query.m */,
-				AD609CEB20ADD7030069D159 /* SLQuery.h */,
-				AD609CEC20ADD7030069D159 /* SLQuery.m */,
+				AD609CEB20ADD7030069D159 /* AppConfig.h */,
+				AD609CEC20ADD7030069D159 /* AppConfig.m */,
 				AD609CF120ADEB280069D159 /* UIScrollView+Refresh.h */,
 				AD609CF220ADEB280069D159 /* UIScrollView+Refresh.m */,
 				AD609CF720ADFC500069D159 /* Country.h */,
@@ -248,7 +248,7 @@
 				AD609CFC20ADFECE0069D159 /* CountriesViewController.m in Sources */,
 				AD9F94B320B6CE9000D4A28E /* NSError+AFNetworking.m in Sources */,
 				AD609CF320ADEB280069D159 /* UIScrollView+Refresh.m in Sources */,
-				AD609CED20ADD7030069D159 /* SLQuery.m in Sources */,
+				AD609CED20ADD7030069D159 /* AppConfig.m in Sources */,
 				AD4457A820A5461200D4A28E /* Query.m in Sources */,
 				AD609CF920ADFC500069D159 /* Country.m in Sources */,
 				AD1CB40020B65A7B00D4A28E /* AFHTTPSessionManager+RACSignal.m in Sources */,

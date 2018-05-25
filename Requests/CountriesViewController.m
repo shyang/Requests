@@ -7,8 +7,8 @@
 //
 
 #import "CountriesViewController.h"
-#import "UIScrollView+Refresh.h"
 #import "Country.h"
+#import "UIScrollView+Refresh.h"
 
 @interface CountriesViewController ()
 

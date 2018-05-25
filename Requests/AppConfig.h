@@ -6,10 +6,8 @@
 //  Copyright © 2018 syang. All rights reserved.
 //
 
-#import <Mantle/Mantle.h>
+#import <Foundation/Foundation.h>
 
-#import "Query.h"
-
-@interface SLQuery : NSObject
+@interface AppConfig : NSObject
 
 @end

@@ -8,8 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import <Mantle/Mantle.h>
-
-#import "SLQuery.h"
+#import <ReactiveObjC/ReactiveObjC.h>
 
 @interface Country : MTLModel <MTLJSONSerializing>
 

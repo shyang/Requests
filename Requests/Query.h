@@ -6,9 +6,9 @@
 //  Copyright © 2018 syang. All rights reserved.
 //
 
+#import <AFNetworking/AFNetworking.h>
 #import <Foundation/Foundation.h>
 #import <ReactiveObjC/ReactiveObjC.h>
-#import <AFNetworking/AFNetworking.h>
 
 typedef NS_ENUM(NSInteger, HttpMethod) {
     GET,
@@ -39,7 +39,7 @@ typedef NS_ENUM(NSInteger, ResponseType) {
 @property (nonatomic) ResponseType responseType; // default: JSON
 @property (nonatomic) NSStringEncoding responseEncoding; // default: NSUTF8StringEncoding
 @property (nonatomic) Class modelClass;
-@property (nonatomic) AFHTTPSessionManager *manager;
+@property (nonatomic) AFHTTPSessionManager *manager; // default: [AFHTTPSessionManager manager]
 
 #pragma mark - defaults
 @property (class, nonatomic) RACSignal *(^interceptor)(Query *input, RACSignal *output);
