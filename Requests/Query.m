@@ -12,9 +12,6 @@
 
 @interface Query ()
 
-@property (nonatomic) HttpMethod method;
-@property (nonatomic) NSString *urlPath;
-
 @property (nonatomic) NSMutableDictionary *parameters;
 @property (nonatomic) NSMutableDictionary *headers;
 @property (nonatomic) void (^block)(id<AFMultipartFormData>);
@@ -23,10 +20,9 @@
 
 @implementation Query
 
-- (instancetype)initWithMethod:(HttpMethod)method urlPath:(NSString *)urlPath {
+- (instancetype)init {
     if (self = [super init]) {
-        _method = method;
-        _urlPath = urlPath;
+        _method = GET;
         _parameters = [NSMutableDictionary new];
         _headers = [NSMutableDictionary new];
         _responseEncoding = NSUTF8StringEncoding;

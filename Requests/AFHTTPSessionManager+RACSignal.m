@@ -11,7 +11,9 @@
 @implementation AFHTTPSessionManager (RACSignal)
 
 - (RACSignal *)requst:(HttpMethod)method urlPath:(NSString *)urlPath config:(void (^)(Query *))config {
-    Query *query = [[Query alloc] initWithMethod:method urlPath:urlPath];
+    Query *query = [Query new];
+    query.method = method;
+    query.urlPath = urlPath;
     if (config) {
         config(query);
     }

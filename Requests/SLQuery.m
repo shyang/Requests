@@ -37,7 +37,7 @@ static RACSignal *retrySignal;
         // 定制 2: 全局认证
         output = [[output materialize] flattenMap:^(RACEvent *event) {
             // [event.error.userInfo[@"result"] isEqualToString:@"login"]
-            NSHTTPURLResponse *response = event.error.response;
+            NSHTTPURLResponse *response = (NSHTTPURLResponse *)event.error.response;
             if (event.eventType == RACEventTypeError && response.statusCode == 401) {
                 return [retrySignal flattenMap:^RACSignal *(id value) {
                     // 成功登录后，再试一次刚才的请求。
