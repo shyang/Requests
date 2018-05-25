@@ -11,6 +11,7 @@
 
 @implementation UIScrollView (Refresh)
 
+// RACCommand 隐藏于实现内部
 - (RACCommand *)showHeader:(RACSignal *)input {
     @weakify(self);
     RACCommand *command = [[RACCommand alloc] initWithSignalBlock:^RACSignal *(id x) {
