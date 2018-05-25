@@ -8,6 +8,7 @@
 
 #import "AFHTTPSessionManager+RACSignal.h"
 #import "Country.h"
+#import "AppConfig.h"
 
 @implementation Country
 
@@ -16,8 +17,7 @@
 }
 
 + (RACSignal *)getAllContries {
-    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
-    return [manager GET:@"http://api.worldbank.org/v2/countries" config:^(Query *q) {
+    return [[AppConfig manager] GET:@"http://api.worldbank.org/v2/countries" config:^(Query *q) {
         [q.parameters addEntriesFromDictionary:@{@"format": @"json", @"per_page": @"100"}];
         q.modelClass = [Country class];
     }];

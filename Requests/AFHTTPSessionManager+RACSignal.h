@@ -6,7 +6,8 @@
 //  Copyright © 2018 syang. All rights reserved.
 //
 
-#import "AFHTTPSessionManager.h"
+#import <AFNetworking/AFHTTPSessionManager.h>
+
 #import "Query.h"
 
 @interface AFHTTPSessionManager (RACSignal)
@@ -18,9 +19,19 @@
  (responseObject, response, query) completed | error
 
  */
+
+// 兼容老接口
+- (RACSignal *)GET:(NSString *)urlPath parameters:(NSDictionary *)parameters;
+- (RACSignal *)POST:(NSString *)urlPath parameters:(NSDictionary *)parameters;
+- (RACSignal *)PUT:(NSString *)urlPath parameters:(NSDictionary *)parameters;
+- (RACSignal *)DELETE:(NSString *)urlPath parameters:(NSDictionary *)parameters;
+
+// 完整的自定义
 - (RACSignal *)GET:(NSString *)urlPath config:(void (^)(Query *q))config;
 - (RACSignal *)POST:(NSString *)urlPath config:(void (^)(Query *q))config;
 - (RACSignal *)PUT:(NSString *)urlPath config:(void (^)(Query *q))config;
 - (RACSignal *)DELETE:(NSString *)urlPath config:(void (^)(Query *q))config;
+
+@property (nonatomic) RACSignal *(^interceptor)(Query *input, RACSignal *output);
 
 @end

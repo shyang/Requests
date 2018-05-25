@@ -6,8 +6,6 @@
 //  Copyright © 2018 syang. All rights reserved.
 //
 
-#import <objc/runtime.h>
-
 #import "Query.h"
 
 @interface Query ()
@@ -35,15 +33,6 @@
     NSLog(@"dealloc %@", self);
 }
 
-static RACSignal *(^_interceptor)(Query *input, RACSignal *output);
-+ (RACSignal *(^)(Query *, RACSignal *))interceptor {
-    return _interceptor;
-}
-
-+ (void)setInterceptor:(RACSignal *(^)(Query *, RACSignal *))interceptor {
-    _interceptor = interceptor;
-}
-
 - (void (^)(void (^)(id<AFMultipartFormData>)))multipartBody {
     return ^(void (^block)(id<AFMultipartFormData>)) {
         self.block = block;
@@ -52,9 +41,8 @@ static RACSignal *(^_interceptor)(Query *input, RACSignal *output);
 
 - (RACSignal *)send {
     // RACSignal body 包含的操作越多，其被 re-subscribe 时，重复执行的操作也越多
-    RACSignal *output = [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
+    return [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
         AFHTTPSessionManager *manager = self.manager ?: [AFHTTPSessionManager manager];
-
         if (self.jsonBody) {
             NSCAssert([NSJSONSerialization isValidJSONObject:self.jsonBody], @"NSArray or NSDictionary!");
             NSCAssert(self.block == nil, @"WTF");
@@ -101,8 +89,6 @@ static RACSignal *(^_interceptor)(Query *input, RACSignal *output);
             [task cancel];
         }];
     }];
-
-    return _interceptor ? _interceptor(self, output) : output;
 }
 
 @end

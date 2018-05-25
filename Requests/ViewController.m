@@ -27,7 +27,8 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
+    AFHTTPSessionManager *manager = [AppConfig manager];
+
     @weakify(self);
     _items = @[
         @[@"401 Basic Auth", ^{

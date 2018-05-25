@@ -11,17 +11,13 @@
 #import "AppConfig.h"
 #import "NSError+AFNetworking.h"
 #import "Query.h"
+#import "AFHTTPSessionManager+RACSignal.h"
 
 @implementation AppConfig
 
-+ (void)load {
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        [self setupInteceptor];
-    });
-}
++ (AFHTTPSessionManager *)manager {
+    AFHTTPSessionManager *manager = [[AFHTTPSessionManager alloc] initWithBaseURL:nil];
 
-+ (void)setupInteceptor {
     RACSignal *retrySignal = [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
         UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Auth" message:nil preferredStyle:UIAlertControllerStyleAlert];
         [alert addTextFieldWithConfigurationHandler:^(UITextField *textField) {
@@ -41,7 +37,7 @@
         return nil;
     }];
 
-    Query.interceptor = ^RACSignal *(Query *input, RACSignal *output) {
+    manager.interceptor = ^RACSignal *(Query *input, RACSignal *output) {
         // 定制 2: 全局认证
         output = [[output materialize] flattenMap:^(RACEvent *event) {
             // [event.error.userInfo[@"result"] isEqualToString:@"login"]
@@ -75,6 +71,8 @@
         }
         return output;
     };
+
+    return manager;
 }
 
 @end

@@ -41,9 +41,6 @@ typedef NS_ENUM(NSInteger, ResponseType) {
 @property (nonatomic) Class modelClass;
 @property (nonatomic) AFHTTPSessionManager *manager; // default: [AFHTTPSessionManager manager]
 
-#pragma mark - defaults
-@property (class, nonatomic) RACSignal *(^interceptor)(Query *input, RACSignal *output);
-
 #pragma mark - The Use Part 使用对象
 - (RACSignal *)send;
 
