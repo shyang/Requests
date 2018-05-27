@@ -121,6 +121,33 @@
                 NSLog(@"err: %@", error);
             }];
         }],
+        @[@"GET Image body", ^{
+            [[manager GET:@"https://httpbin.org/image/jpeg" config:^(Query *q) {
+                q.responseType = IMAGE;
+            }] subscribeNext:^(id x) {
+                NSLog(@"ok: %@", x);
+            } error:^(NSError *error) {
+                NSLog(@"ok: %@", error);
+            }];
+        }],
+        @[@"GET Blob body", ^{
+            [[manager GET:@"https://httpbin.org/image/png" config:^(Query *q) {
+                q.responseType = BLOB;
+            }] subscribeNext:^(id x) {
+                NSLog(@"ok: %@", x);
+            } error:^(NSError *error) {
+                NSLog(@"ok: %@", error);
+            }];
+        }],
+        @[@"GET Text body", ^{
+            [[manager GET:@"https://httpbin.org/encoding/utf8" config:^(Query *q) {
+                q.responseType = TEXT;
+            }] subscribeNext:^(id x) {
+                NSLog(@"ok: %@", x);
+            } error:^(NSError *error) {
+                NSLog(@"ok: %@", error);
+            }];
+        }]
     ];
     [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:NSStringFromClass([UITableViewCell class])];
 }

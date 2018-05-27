@@ -43,19 +43,48 @@
     // RACSignal body 包含的操作越多，其被 re-subscribe 时，重复执行的操作也越多
     return [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
         AFHTTPSessionManager *manager = self.manager ?: [AFHTTPSessionManager manager];
+
+        // Request Part
         if (self.jsonBody) {
             NSCAssert([NSJSONSerialization isValidJSONObject:self.jsonBody], @"NSArray or NSDictionary!");
             NSCAssert(self.block == nil, @"WTF");
-            manager.requestSerializer = [AFJSONRequestSerializer serializer];
+            if (![manager.requestSerializer isMemberOfClass:[AFJSONRequestSerializer class]]) {
+                manager.requestSerializer = [AFJSONRequestSerializer serializer];
+            }
         } else {
-            manager.requestSerializer = [AFHTTPRequestSerializer serializer];
+            if (![manager.requestSerializer isMemberOfClass:[AFHTTPRequestSerializer class]]) {
+                manager.requestSerializer = [AFHTTPRequestSerializer serializer];
+            }
         }
 
+        // Response Part
+        switch (self.responseType) {
+        case JSON:
+            if (![manager.responseSerializer isMemberOfClass:[AFJSONResponseSerializer class]]) {
+                manager.responseSerializer = [AFJSONResponseSerializer serializer];
+            }
+            break;
+        case IMAGE:
+            if (![manager.responseSerializer isMemberOfClass:[AFImageResponseSerializer class]]) {
+                manager.responseSerializer = [AFImageResponseSerializer serializer];
+            }
+            break;
+        case TEXT:
+        case BLOB:
+            if (![manager.responseSerializer isMemberOfClass:[AFHTTPResponseSerializer class]]) {
+                manager.responseSerializer = [AFHTTPResponseSerializer serializer];
+            }
+        }
+
+        // Headers
         [self.headers enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
             [manager.requestSerializer setValue:obj forHTTPHeaderField:key];
         }];
 
         void (^ok)(NSURLSessionDataTask *, id) = ^(NSURLSessionDataTask *task, id responseObject) {
+            if (self.responseType == TEXT) {
+                responseObject = [[NSString alloc] initWithData:responseObject encoding:self.responseEncoding];
+            }
             [subscriber sendNext:RACTuplePack(responseObject, task.response, self)];
             [subscriber sendCompleted];
         };
