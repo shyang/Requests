@@ -68,7 +68,9 @@
         switch (self.responseType) {
         case JSON:
             if (![manager.responseSerializer isKindOfClass:[AFJSONResponseSerializer class]]) {
-                manager.responseSerializer = [AFJSONResponseSerializer serializer];
+                AFJSONResponseSerializer *serializer = [AFJSONResponseSerializer serializerWithReadingOptions:NSJSONReadingMutableContainers];
+                serializer.removesKeysWithNullValues = YES;
+                manager.responseSerializer = serializer;
             }
             break;
         case IMAGE:
