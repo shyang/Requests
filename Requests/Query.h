@@ -19,9 +19,8 @@ typedef NS_ENUM(NSInteger, HttpMethod) {
 
 typedef NS_ENUM(NSInteger, ResponseType) {
     JSON, // id: NSDictionary or NSArray
-    TEXT, // NSString: respects `responseEncoding`
     IMAGE, // UIImage
-    BLOB, // NSData
+    RAW, // NSData
 };
 
 @interface Query : NSObject
@@ -37,7 +36,6 @@ typedef NS_ENUM(NSInteger, ResponseType) {
 @property (nonatomic) id jsonBody;
 
 @property (nonatomic) ResponseType responseType; // default: JSON
-@property (nonatomic) NSStringEncoding responseEncoding; // default: NSUTF8StringEncoding
 @property (nonatomic) Class modelClass;
 @property (nonatomic) AFHTTPSessionManager *manager; // default: [AFHTTPSessionManager manager]
 

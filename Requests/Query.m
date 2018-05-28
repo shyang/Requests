@@ -23,7 +23,6 @@
         _method = GET;
         _parameters = [NSMutableDictionary new];
         _headers = [NSMutableDictionary new];
-        _responseEncoding = NSUTF8StringEncoding;
         _responseType = JSON;
     }
     return self;
@@ -44,11 +43,17 @@
     return [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
         AFHTTPSessionManager *manager = self.manager ?: [AFHTTPSessionManager manager];
 
+        // 潜在 bug 风险：serializer 类型不匹配时被自动修正，会丢失之前的配置！
+        // 故若对 serializer 有定制，请生成并使用多个 manager！
+
+        // 注意 isKindOfClass: 与 isMemberOfClass: 的区别
+
         // Request Part
         if (self.jsonBody) {
-            NSCAssert([NSJSONSerialization isValidJSONObject:self.jsonBody], @"NSArray or NSDictionary!");
-            NSCAssert(self.block == nil, @"WTF");
-            if (![manager.requestSerializer isMemberOfClass:[AFJSONRequestSerializer class]]) {
+            NSAssert([NSJSONSerialization isValidJSONObject:self.jsonBody], @"must be NSArray or NSDictionary!");
+            NSAssert(self.block == nil, nil);
+
+            if (![manager.requestSerializer isKindOfClass:[AFJSONRequestSerializer class]]) {
                 manager.requestSerializer = [AFJSONRequestSerializer serializer];
             }
         } else {
@@ -60,17 +65,16 @@
         // Response Part
         switch (self.responseType) {
         case JSON:
-            if (![manager.responseSerializer isMemberOfClass:[AFJSONResponseSerializer class]]) {
+            if (![manager.responseSerializer isKindOfClass:[AFJSONResponseSerializer class]]) {
                 manager.responseSerializer = [AFJSONResponseSerializer serializer];
             }
             break;
         case IMAGE:
-            if (![manager.responseSerializer isMemberOfClass:[AFImageResponseSerializer class]]) {
+            if (![manager.responseSerializer isKindOfClass:[AFImageResponseSerializer class]]) {
                 manager.responseSerializer = [AFImageResponseSerializer serializer];
             }
             break;
-        case TEXT:
-        case BLOB:
+        case RAW:
             if (![manager.responseSerializer isMemberOfClass:[AFHTTPResponseSerializer class]]) {
                 manager.responseSerializer = [AFHTTPResponseSerializer serializer];
             }
@@ -82,9 +86,6 @@
         }];
 
         void (^ok)(NSURLSessionDataTask *, id) = ^(NSURLSessionDataTask *task, id responseObject) {
-            if (self.responseType == TEXT) {
-                responseObject = [[NSString alloc] initWithData:responseObject encoding:self.responseEncoding];
-            }
             [subscriber sendNext:RACTuplePack(responseObject, task.response, self)];
             [subscriber sendCompleted];
         };

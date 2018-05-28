@@ -8,8 +8,6 @@
 
 #import <Foundation/Foundation.h>
 
-#import "Query.h"
-
 @interface NSError (AFNetworking)
 
 @property (nonatomic, readonly) NSURLResponse *response;
