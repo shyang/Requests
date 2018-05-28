@@ -34,6 +34,7 @@
 
 - (void (^)(void (^)(id<AFMultipartFormData>)))multipartBody {
     return ^(void (^block)(id<AFMultipartFormData>)) {
+        NSAssert(self.method == POST, @"POST only!");
         self.block = block;
     };
 }
@@ -51,7 +52,8 @@
         // Request Part
         if (self.jsonBody) {
             NSAssert([NSJSONSerialization isValidJSONObject:self.jsonBody], @"must be NSArray or NSDictionary!");
-            NSAssert(self.block == nil, nil);
+            NSAssert(self.block == nil, @"不应设置 multipart");
+            NSAssert(self.parameters.count == 0, @"无视此处参数！");
 
             if (![manager.requestSerializer isKindOfClass:[AFJSONRequestSerializer class]]) {
                 manager.requestSerializer = [AFJSONRequestSerializer serializer];

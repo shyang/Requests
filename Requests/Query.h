@@ -23,6 +23,21 @@ typedef NS_ENUM(NSInteger, ResponseType) {
     RAW, // NSData
 };
 
+/*
+ GET POST PUT DELETE 可与 Content-Type 任意组合，但实际会做限制：
+
+ GET DELETE 只支持 parameters，编码在 URL 之中，不允许 jsonBody 或 multipartBody
+
+ PUT 只支持 jsonBody，不允许 multipartBody 或 parameters
+
+ POST 支持：
+ * jsonBody (application/json)
+ * parameters (application/x-www-form-urlencoded)
+ * parameters + multipartBody (multipart/form-data)
+
+ 总结：jsonBody、parameters、multipartBody 互斥，除了 POST multipart 下后两者可共存
+
+ */
 @interface Query : NSObject
 
 #pragma mark - The Builder Part 构造对象
@@ -41,14 +56,5 @@ typedef NS_ENUM(NSInteger, ResponseType) {
 
 #pragma mark - The Use Part 使用对象
 - (RACSignal *)send;
-
-/*
- * 所以请求都需要加入某些 header，如 User-Agent:
-   新建一个 manager， 设置其 sessionConfiguration.HTTPAdditionalHeaders
-   Authorization 不应使用全局 Header，有安全漏洞，不如 cookie 自动、安全
-
- * 只从 cache 读取:
-   新建一个 manager，设置其 sessionConfiguration.requestCachePolicy
- */
 
 @end
