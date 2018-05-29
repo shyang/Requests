@@ -51,8 +51,11 @@ typedef NS_ENUM(NSInteger, ResponseType) {
 @property (nonatomic) id jsonBody;
 
 @property (nonatomic) ResponseType responseType; // default: JSON
-@property (nonatomic) Class modelClass;
 @property (nonatomic) AFHTTPSessionManager *manager; // default: [AFHTTPSessionManager manager]
+
+// store only
+@property (nonatomic) Class modelClass;
+@property (nonatomic) NSString *listKey;
 
 #pragma mark - The Use Part 使用对象
 - (RACSignal *)send;

@@ -12,7 +12,7 @@
 
 @interface AFHTTPSessionManager (RACSignal)
 
-// Query 是一个 value object，封装了一个 request 的所有输入、输出
+// Query 是一个 value object，封装了一个 request 的所有输入
 /*
  RACSignal Protocol:
 
@@ -25,6 +25,8 @@
 - (RACSignal *)POST:(NSString *)urlPath parameters:(NSDictionary *)parameters;
 - (RACSignal *)PUT:(NSString *)urlPath parameters:(NSDictionary *)parameters;
 - (RACSignal *)DELETE:(NSString *)urlPath parameters:(NSDictionary *)parameters;
+- (RACSignal *)GET:(NSString *)urlPath parameters:(NSDictionary *)parameters listKey:(NSString *)listKey modelClass:(Class)modelClass;
+- (RACSignal *)POST:(NSString *)urlPath parameters:(NSDictionary *)parameters listKey:(NSString *)listKey modelClass:(Class)modelClass;
 
 // 完整的自定义
 - (RACSignal *)GET:(NSString *)urlPath config:(void (^)(Query *q))config;

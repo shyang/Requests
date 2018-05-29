@@ -23,12 +23,6 @@
     return self.interceptor ? self.interceptor(query, [query send]) : [query send];
 }
 
-- (RACSignal *)requst:(HttpMethod)method urlPath:(NSString *)urlPath parameters:(NSDictionary *)parameters {
-    return [self requst:GET urlPath:urlPath config:^(Query *q) {
-        [q.parameters addEntriesFromDictionary:parameters];
-    }];
-}
-
 static void *kInterceptorKey;
 - (RACSignal *(^)(Query *, RACSignal *))interceptor {
     return objc_getAssociatedObject(self, &kInterceptorKey);
@@ -55,7 +49,13 @@ static void *kInterceptorKey;
     return [self requst:DELETE urlPath:urlPath config:config];
 }
 
-#pragma mark -
+#pragma mark - Legacy
+- (RACSignal *)requst:(HttpMethod)method urlPath:(NSString *)urlPath parameters:(NSDictionary *)parameters {
+    return [self requst:method urlPath:urlPath config:^(Query *q) {
+        [q.parameters addEntriesFromDictionary:parameters];
+    }];
+}
+
 - (RACSignal *)GET:(NSString *)urlPath parameters:(NSDictionary *)parameters {
     return [self requst:GET urlPath:urlPath parameters:parameters];
 }
@@ -70,6 +70,23 @@ static void *kInterceptorKey;
 
 - (RACSignal *)DELETE:(NSString *)urlPath parameters:(NSDictionary *)parameters {
     return [self requst:DELETE urlPath:urlPath parameters:parameters];
+}
+
+#pragma mark - Legacy
+- (RACSignal *)requst:(HttpMethod)method urlPath:(NSString *)urlPath parameters:(NSDictionary *)parameters listKey:(NSString *)listKey modelClass:(Class)modelClass {
+    return [self requst:method urlPath:urlPath config:^(Query *q) {
+        [q.parameters addEntriesFromDictionary:parameters];
+        q.listKey = listKey;
+        q.modelClass = modelClass;
+    }];
+}
+
+- (RACSignal *)GET:(NSString *)urlPath parameters:(NSDictionary *)parameters listKey:(NSString *)listKey modelClass:(Class)modelClass {
+    return [self requst:GET urlPath:urlPath parameters:parameters listKey:listKey modelClass:modelClass];
+}
+
+- (RACSignal *)POST:(NSString *)urlPath parameters:(NSDictionary *)parameters listKey:(NSString *)listKey modelClass:(Class)modelClass {
+    return [self requst:POST urlPath:urlPath parameters:parameters listKey:listKey modelClass:modelClass];
 }
 
 @end
