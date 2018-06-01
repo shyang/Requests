@@ -34,10 +34,10 @@
     // 一次性的数据设置：包括第一次加载
     @weakify(self);
     [self.tableView showHeaderAndFooter:[Country getAllContries] output:^(RACSignal *values, RACSignal *errors) {
-        [values subscribeNext:^(RACTuple *x) {
+        [values subscribeNext:^(id x) {
             @strongify(self)
             // 根据数据调整UI
-            self.items = x.first;
+            self.items = x;
             [self.tableView reloadData];
         }];
         [errors subscribeNext:^(id x) {

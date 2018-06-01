@@ -90,10 +90,11 @@
             [manager.requestSerializer setValue:obj forHTTPHeaderField:key];
         }];
 
-        void (^ok)(NSURLSessionDataTask *, id) = ^(NSURLSessionDataTask *task, id responseObject) {
-            self.responseObject = responseObject;
+        void (^ok)(NSURLSessionDataTask *, id) = ^(NSURLSessionDataTask *task, NSObject *responseObject) {
             self.response = task.response;
-            [subscriber sendNext:RACTuplePack(responseObject, self)];
+            responseObject.query = self;
+            // self.responseObject = responseObject; // 循环引用，故只在变换后启用
+            [subscriber sendNext:responseObject];
             [subscriber sendCompleted];
         };
         void (^err)(NSURLSessionDataTask *, NSError *) = ^(NSURLSessionDataTask *task, NSError *error) {

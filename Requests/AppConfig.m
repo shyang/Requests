@@ -57,14 +57,21 @@
 
         // 定制 3: 全局解析
         if (input.modelClass) {
-            output = [output flattenMap:^RACSignal *(RACTuple *value) {
-                NSArray *list = value.first[1];
+            output = [output flattenMap:^RACSignal *(NSArray *value) {
+                NSArray *list = value[1];
+                Query *query = value.query;
                 NSError *error = nil;
-                id objects = [MTLJSONAdapter modelsOfClass:input.modelClass fromJSONArray:list error:&error];
+                NSArray *objects = [MTLJSONAdapter modelsOfClass:input.modelClass fromJSONArray:list error:&error];
                 if (error) {
+                    error.query = query;
                     return [RACSignal error:error];
                 }
-                return [RACSignal return:RACTuplePack(objects, value.second)];
+
+                // transfer
+                query.responseObject = value;
+                objects.query = query;
+                value.query = nil;
+                return [RACSignal return:objects];
             }];
         }
         return output;
