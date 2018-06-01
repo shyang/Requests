@@ -13,47 +13,49 @@
 @implementation UIScrollView (Refresh)
 
 // RACCommand 隐藏于实现内部
-- (RACTuple *)showHeader:(RACSignal *)input {
-    if (!self.mj_header) {
-        self.mj_header = [[MJRefreshNormalHeader alloc] init];
-    }
-
-    RACSubject *values = [RACSubject subject];
-    RACSubject *errors = [RACSubject subject];
-
+- (RACCommand *)showHeader:(RACSignal *)input {
     __block Query *query = nil;
+
     @weakify(self);
-    [self.mj_header setRefreshingBlock:^{
-        [query.parameters removeObjectForKey:@"page"]; // reset
-
+    RACCommand *command = [[RACCommand alloc] initWithSignalBlock:^RACSignal *(id x) {
         @strongify(self);
-        [[input takeUntil:self.rac_willDeallocSignal] subscribeNext:^(NSObject *x) {
+        return [[input takeUntil:self.rac_willDeallocSignal] doNext:^(NSObject *x) {
             query = x.query;
-            [values sendNext:x];
-        } error:^(NSError *error) {
-            [errors sendNext:error];
-
-            [self.mj_header endRefreshing];
-        } completed:^{
-            [self.mj_header endRefreshing];
         }];
     }];
 
-    return RACTuplePack(values, errors);
+    [self.mj_header endRefreshing];
+    if (!self.mj_header) {
+        self.mj_header = [[MJRefreshNormalHeader alloc] init];
+    }
+    [self.mj_header setRefreshingBlock:^{
+        [query.parameters removeObjectForKey:@"page"]; // reset
+
+        // retain `command`
+        [command execute:nil];
+    }];
+
+    [[command.executing skip:1] subscribeNext:^(id x) {
+        @strongify(self);
+        if (![x boolValue]) {
+            [self.mj_header endRefreshing];
+        }
+    }];
+
+    return command;
 }
 
 - (void)showHeader:(RACSignal *)input output:(void (^)(RACSignal *, RACSignal *))output {
-    RACTuple *tuple = [self showHeader:input];
-    output(tuple.first, tuple.second);
+    RACCommand *command = [self showHeader:input];
+    output([command.executionSignals concat], command.errors);
 }
 
 - (void)showHeaderAndFooter:(RACSignal *)input output:(void (^)(RACSignal *, RACSignal *))output {
-    RACTuple *tuple = [self showHeader:input];
-    RACSubject *values = tuple.first;
-    RACSubject *errors = tuple.second;
+    RACCommand *command = [self showHeader:input];
 
     @weakify(self);
-    RACSignal *reduced = [values scanWithStart:[NSMutableArray array] reduce:^id (NSMutableArray *running, NSArray *next) {
+    @weakify(command);
+    RACSignal *reduced = [[command.executionSignals concat] scanWithStart:[NSMutableArray array] reduce:^id (NSMutableArray *running, NSArray *next) {
         @strongify(self);
         NSArray *items = next;
         Query *query = next.query;
@@ -68,16 +70,9 @@
             }
 
             self.mj_footer.refreshingBlock =^{
-                @strongify(self);
+                @strongify(command);
                 query.parameters[@"page"] = @(page + 1);
-                [[input takeUntil:self.rac_willDeallocSignal] subscribeNext:^(id x) {
-                    [values sendNext:x];
-                } error:^(NSError *error) {
-                    [errors sendNext:error];
-                } completed:^{
-                    @strongify(self);
-                    [self.mj_header endRefreshing];
-                }];
+                [command execute:nil];
             };
         } else {
             [self.mj_footer endRefreshingWithNoMoreData];
@@ -90,7 +85,7 @@
         return next;
     }];
 
-    output(reduced, errors);
+    output(reduced, command.errors);
 }
 
 @end
