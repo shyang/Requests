@@ -12,11 +12,10 @@
 
 @interface AFHTTPSessionManager (RACSignal)
 
-// Query 是一个 value object，封装了一个 request 的所有输入
 /*
  RACSignal Protocol:
 
- (responseObject, response, query) completed | error
+ responseObject completed | error
 
  */
 
@@ -35,6 +34,7 @@
 - (RACSignal *)PUT:(NSString *)urlPath config:(void (^)(Query *q))config;
 - (RACSignal *)DELETE:(NSString *)urlPath config:(void (^)(Query *q))config;
 
-@property (nonatomic) RACSignal *(^interceptor)(Query *input, RACSignal *output);
+// 每个 manager 一个 interceptor，供其发出的所有请求共享
+@property (nonatomic) RACSignal *(^interceptor)(RACSignal *output);
 
 @end

@@ -37,7 +37,9 @@
         return nil;
     }];
 
-    manager.interceptor = ^RACSignal *(Query *input, RACSignal *output) {
+    manager.interceptor = ^RACSignal *(RACSignal *output) {
+        Query *input = output.query;
+
         // 定制 2: 全局认证
         output = [[output materialize] flattenMap:^(RACEvent *event) {
             // [event.error.userInfo[@"result"] isEqualToString:@"login"]
@@ -54,20 +56,20 @@
             }
             return [[RACSignal return:event] dematerialize];
         }];
+        output.query = input; // 不要忘记传递 query 对象
 
         // 定制 3: 全局解析
         if (input.modelClass) {
-            output = [output flattenMap:^RACSignal *(RACTuple *value) {
-                NSArray *body = [value first];
-                NSDictionary *cursor = body[0];
+            output = [output flattenMap:^RACSignal *(id body) {
                 NSArray *list = body[1];
                 NSError *error = nil;
                 id objects = [MTLJSONAdapter modelsOfClass:input.modelClass fromJSONArray:list error:&error];
                 if (error) {
                     return [RACSignal error:error];
                 }
-                return [RACSignal return:RACTuplePack(objects, cursor, value.third)];
+                return [RACSignal return:objects];
             }];
+            output.query = input; // 不要忘记传递 query 对象
         }
         return output;
     };

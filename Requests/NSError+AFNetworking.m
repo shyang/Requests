@@ -7,8 +7,23 @@
 //
 
 #import <AFNetworking/AFNetworking.h>
+#import <objc/runtime.h>
 
 #import "NSError+AFNetworking.h"
+
+@implementation RACSignal (AFNetworking)
+
+static int kQueryKey;
+- (Query *)query {
+    return objc_getAssociatedObject(self, &kQueryKey);
+}
+
+- (void)setQuery:(Query *)query {
+    objc_setAssociatedObject(self, &kQueryKey, query, OBJC_ASSOCIATION_RETAIN);
+}
+
+@end
+
 
 @implementation NSError (AFNetworking)
 

@@ -38,8 +38,8 @@
              https://forums.developer.apple.com/thread/39293
              */
             [[manager GET:@"http://httpbin.org/basic-auth/demo/demo" config:nil] subscribeNext:^(id x) {
-                NSLog(@"ok: %@", [x first]);
-            } error:^(NSError * _Nullable error) {
+                NSLog(@"ok: %@", x);
+            } error:^(NSError *error) {
                 NSLog(@"err: %@", error);
             }];
         }],
@@ -47,7 +47,7 @@
             [[manager GET:@"http://httpbin.org/get" config:^(Query *q) {
                 [q.parameters addEntriesFromDictionary:@{@"1": @"bb", @"2": @"dd"}];
             }] subscribeNext:^(id x) {
-                NSLog(@"ok: %@", [x first]);
+                NSLog(@"ok: %@", x);
             } error:^(NSError *error) {
                 NSLog(@"err: %@", error);
             }];
@@ -62,7 +62,7 @@
                     [formData appendPartWithFormData:d name:@"m3"];
                 });
             }] subscribeNext:^(id x) {
-                NSLog(@"ok: %@", [x first]);
+                NSLog(@"ok: %@", x);
             } error:^(NSError *error) {
                 NSLog(@"err: %@", error);
             }];
@@ -71,7 +71,7 @@
             [[manager POST:@"http://httpbin.org/post" config:^(Query *q) {
                 q.jsonBody = @{@"5": @"bb", @"6": @"dd"};
             }] subscribeNext:^(id x) {
-                NSLog(@"ok: %@", [x first]);
+                NSLog(@"ok: %@", x);
             } error:^(NSError *error) {
                 NSLog(@"err: %@", error);
             }];
@@ -80,7 +80,7 @@
             [[manager POST:@"http://httpbin.org/post" config:^(Query *q) {
                 [q.parameters addEntriesFromDictionary:@{@"7": @"bb", @"8": @"dd"}];
             }] subscribeNext:^(id x) {
-                NSLog(@"ok: %@", [x first]);
+                NSLog(@"ok: %@", x);
             } error:^(NSError *error) {
                 NSLog(@"err: %@", error);
             }];
@@ -89,7 +89,7 @@
             [[manager PUT:@"http://httpbin.org/put" config:^(Query *q) {
                 q.jsonBody = @{@"9": @"bb", @"10": @"dd"};
             }] subscribeNext:^(id x) {
-                NSLog(@"ok: %@", [x first]);
+                NSLog(@"ok: %@", x);
             } error:^(NSError *error) {
                 NSLog(@"err: %@", error);
             }];
@@ -98,7 +98,7 @@
             [[manager DELETE:@"http://httpbin.org/delete" config:^(Query *q) {
                 [q.parameters addEntriesFromDictionary:@{@"11": @"bb", @"12": @"dd"}];
             }] subscribeNext:^(id x) {
-                NSLog(@"ok: %@", [x first]);
+                NSLog(@"ok: %@", x);
             } error:^(NSError *error) {
                 NSLog(@"err: %@", error);
             }];

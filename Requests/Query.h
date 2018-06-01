@@ -10,6 +10,8 @@
 #import <Foundation/Foundation.h>
 #import <ReactiveObjC/ReactiveObjC.h>
 
+// Query 是一个 value object，封装了一个 request 的所有输入 & 原始的输出
+
 typedef NS_ENUM(NSInteger, HttpMethod) {
     GET,
     POST,
@@ -59,5 +61,9 @@ typedef NS_ENUM(NSInteger, ResponseType) {
 
 #pragma mark - The Use Part 使用对象
 - (RACSignal *)send;
+
+#pragma mark - Output
+@property (nonatomic) id responseObject; // 原始的输出，未经过 manager.interceptor 的处理
+@property (nonatomic) NSURLResponse *response;
 
 @end
