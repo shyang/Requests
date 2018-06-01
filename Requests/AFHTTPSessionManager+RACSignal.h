@@ -37,6 +37,6 @@
 - (RACSignal *)DELETE:(NSString *)urlPath config:(void (^)(Query *q))config;
 
 // 每个 manager 一个 interceptor，供其发出的所有请求共享
-@property (nonatomic) RACSignal *(^interceptor)(Query *input, RACSignal *output);
+@property (nonatomic) RACSignal *(^interceptor)(RACSignal *output);
 
 @end

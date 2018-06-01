@@ -37,27 +37,26 @@
         return nil;
     }];
 
-    manager.interceptor = ^RACSignal *(Query *input, RACSignal *output) {
-        // 定制 2: 全局认证
-        output = [[output materialize] flattenMap:^(RACEvent *event) {
-            // [event.error.userInfo[@"result"] isEqualToString:@"login"]
+    manager.interceptor = ^RACSignal *(RACSignal *output) {
+        return [[[output materialize] flattenMap:^(RACEvent *event) {
+            // 全局认证
             NSHTTPURLResponse *response = (NSHTTPURLResponse *)event.error.response;
             if (event.eventType == RACEventTypeError && response.statusCode == 401) {
+                Query *query = event.error.query;
                 return [retrySignal flattenMap:^RACSignal *(id value) {
                     // 成功登录后，再试一次刚才的请求。
                     if ([value count]) {
-                        [input.headers addEntriesFromDictionary:value];
+                        [query.headers addEntriesFromDictionary:value];
                         return output;
                     }
                     return [RACSignal error:event.error];
                 }];
             }
             return [[RACSignal return:event] dematerialize];
-        }];
-
-        // 定制 3: 全局解析
-        if (input.modelClass) {
-            output = [output flattenMap:^RACSignal *(NSArray *value) {
+        }] flattenMap:^RACSignal *(NSArray *value) {
+            // 全局解析
+            Query *input = value.query;
+            if (input.modelClass) {
                 NSArray *list = value[1];
                 Query *query = value.query;
                 NSError *error = nil;
@@ -72,9 +71,9 @@
                 objects.query = query;
                 value.query = nil;
                 return [RACSignal return:objects];
-            }];
-        }
-        return output;
+            }
+            return [RACSignal return:value];
+        }];
     };
 
     return manager;
