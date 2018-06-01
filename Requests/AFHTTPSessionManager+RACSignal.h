@@ -26,8 +26,13 @@
 - (RACSignal *)POST:(NSString *)urlPath parameters:(NSDictionary *)parameters;
 - (RACSignal *)PUT:(NSString *)urlPath parameters:(NSDictionary *)parameters;
 - (RACSignal *)DELETE:(NSString *)urlPath parameters:(NSDictionary *)parameters;
+
+- (RACSignal *)GET:(NSString *)urlPath parameters:(NSDictionary *)parameters listKey:(NSString *)listKey;
+- (RACSignal *)POST:(NSString *)urlPath parameters:(NSDictionary *)parameters listKey:(NSString *)listKey;
+
 - (RACSignal *)GET:(NSString *)urlPath parameters:(NSDictionary *)parameters listKey:(NSString *)listKey modelClass:(Class)modelClass;
 - (RACSignal *)POST:(NSString *)urlPath parameters:(NSDictionary *)parameters listKey:(NSString *)listKey modelClass:(Class)modelClass;
+
 - (RACSignal *)POST:(NSString *)urlPath parameters:(NSDictionary *)parameters constructingBodyWithBlock:(void (^)(id<AFMultipartFormData> formData))block;
 
 // 新的统一接口，urlPath 是必须的，所以特别提取了出来

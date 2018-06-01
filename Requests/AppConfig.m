@@ -55,12 +55,12 @@
             return [[RACSignal return:event] dematerialize];
         }] flattenMap:^RACSignal *(NSArray *value) {
             // 全局解析
-            Query *input = value.query;
-            if (input.modelClass) {
+            Query *query = value.query;
+            if (query.modelClass) {
                 NSArray *list = value[1];
-                Query *query = value.query;
+
                 NSError *error = nil;
-                NSArray *objects = [MTLJSONAdapter modelsOfClass:input.modelClass fromJSONArray:list error:&error];
+                NSArray *objects = [MTLJSONAdapter modelsOfClass:query.modelClass fromJSONArray:list error:&error];
                 if (error) {
                     error.query = query;
                     return [RACSignal error:error];

@@ -33,16 +33,15 @@
 
     // 一次性的数据设置：包括第一次加载
     @weakify(self);
-    [self.tableView showHeaderAndFooter:[Country getAllContries] output:^(RACSignal *values, RACSignal *errors) {
-        [values subscribeNext:^(id x) {
-            @strongify(self)
-            // 根据数据调整UI
-            self.items = x;
-            [self.tableView reloadData];
-        }];
-        [errors subscribeNext:^(id x) {
-            NSLog(@"pull header err %@", x);
-        }];
+    RACTuple *output = [self.tableView showHeaderAndFooter:[Country getAllContries]];
+    [output.first subscribeNext:^(id x) {
+        @strongify(self)
+        // 根据数据调整UI
+        self.items = x;
+        [self.tableView reloadData];
+    }];
+    [output.second subscribeNext:^(id x) {
+        NSLog(@"pull header err %@", x);
     }];
 }
 

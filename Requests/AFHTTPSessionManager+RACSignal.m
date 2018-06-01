@@ -85,8 +85,16 @@ static void *kInterceptorKey;
     return [self requst:GET urlPath:urlPath parameters:parameters listKey:listKey modelClass:modelClass];
 }
 
+- (RACSignal *)GET:(NSString *)urlPath parameters:(NSDictionary *)parameters listKey:(NSString *)listKey {
+    return [self requst:GET urlPath:urlPath parameters:parameters listKey:listKey modelClass:nil];
+}
+
 - (RACSignal *)POST:(NSString *)urlPath parameters:(NSDictionary *)parameters listKey:(NSString *)listKey modelClass:(Class)modelClass {
     return [self requst:POST urlPath:urlPath parameters:parameters listKey:listKey modelClass:modelClass];
+}
+
+- (RACSignal *)POST:(NSString *)urlPath parameters:(NSDictionary *)parameters listKey:(NSString *)listKey {
+    return [self requst:POST urlPath:urlPath parameters:parameters listKey:listKey modelClass:nil];
 }
 
 - (RACSignal *)POST:(NSString *)urlPath parameters:(NSDictionary *)parameters constructingBodyWithBlock:(void (^)(id<AFMultipartFormData>))block {

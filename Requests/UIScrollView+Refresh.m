@@ -12,8 +12,7 @@
 
 @implementation UIScrollView (Refresh)
 
-// RACCommand 隐藏于实现内部
-- (RACTuple *)showHeader:(RACSignal *)input {
+- (RACTwoTuple *)showHeader:(RACSignal *)input {
     if (!self.mj_header) {
         self.mj_header = [[MJRefreshNormalHeader alloc] init];
     }
@@ -24,17 +23,20 @@
     __block Query *query = nil;
     @weakify(self);
     [self.mj_header setRefreshingBlock:^{
+        @strongify(self);
+
         [query.parameters removeObjectForKey:@"page"]; // reset
 
-        @strongify(self);
         [[input takeUntil:self.rac_willDeallocSignal] subscribeNext:^(NSObject *x) {
             query = x.query;
             [values sendNext:x];
         } error:^(NSError *error) {
+            @strongify(self);
             [errors sendNext:error];
 
             [self.mj_header endRefreshing];
         } completed:^{
+            @strongify(self);
             [self.mj_header endRefreshing];
         }];
     }];
@@ -42,20 +44,17 @@
     return RACTuplePack(values, errors);
 }
 
-- (void)showHeader:(RACSignal *)input output:(void (^)(RACSignal *, RACSignal *))output {
-    RACTuple *tuple = [self showHeader:input];
-    output(tuple.first, tuple.second);
-}
-
-- (void)showHeaderAndFooter:(RACSignal *)input output:(void (^)(RACSignal *, RACSignal *))output {
+- (RACTwoTuple *)showHeaderAndFooter:(RACSignal *)input {
     RACTuple *tuple = [self showHeader:input];
     RACSubject *values = tuple.first;
     RACSubject *errors = tuple.second;
 
     @weakify(self);
+    @weakify(input);
+    @weakify(values);
     RACSignal *reduced = [values scanWithStart:[NSMutableArray array] reduce:^id (NSMutableArray *running, NSArray *next) {
         @strongify(self);
-        NSArray *items = next;
+
         Query *query = next.query;
         NSDictionary *cursor = query.responseObject[0];
         int page = [cursor[@"page"] intValue];
@@ -69,14 +68,13 @@
 
             self.mj_footer.refreshingBlock =^{
                 @strongify(self);
+                @strongify(input);
                 query.parameters[@"page"] = @(page + 1);
                 [[input takeUntil:self.rac_willDeallocSignal] subscribeNext:^(id x) {
+                    @strongify(values);
                     [values sendNext:x];
                 } error:^(NSError *error) {
                     [errors sendNext:error];
-                } completed:^{
-                    @strongify(self);
-                    [self.mj_header endRefreshing];
                 }];
             };
         } else {
@@ -84,13 +82,13 @@
         }
 
         if (query.parameters[@"page"]) {
-            [running addObjectsFromArray:items];
+            [running addObjectsFromArray:next];
             return running;
         }
         return next;
     }];
 
-    output(reduced, errors);
+    return RACTuplePack(reduced, errors);
 }
 
 @end
