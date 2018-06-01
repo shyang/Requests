@@ -18,7 +18,7 @@
 
 + (RACSignal *)getAllContries {
     return [[AppConfig manager] GET:@"http://api.worldbank.org/v2/countries" config:^(Query *q) {
-        [q.parameters addEntriesFromDictionary:@{@"format": @"json", @"per_page": @"100"}];
+        [q.parameters addEntriesFromDictionary:@{@"format": @"json", @"per_page": @"5"}];
         q.modelClass = [Country class];
     }];
 }

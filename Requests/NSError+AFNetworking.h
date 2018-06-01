@@ -10,6 +10,9 @@
 #import "Query.h"
 
 /*
+ 去掉 Query，直接返回 RACSignal 的最大意义就是 99% 的情况下都在使用 RACSignal
+ 故此处只是为了那些 1% 需要访问 Query 的情况
+
  一次请求的输出为 responseObject | error
  若要尽可能的包含完整信息（如原始的 request、response headers，有助于调试、重试等），若干方案：
  1、保存在它们的公共父类 NSObject 之上：在 interceptor 内做变换时需手工传递，略有不便。
@@ -18,6 +21,9 @@
  4、类似 3，专门定义一个 Result = (id, query) 类，清晰明确一些。但 error 仍需扩展。
 
  此 commit 实现为方案1，其它地方变换无需传递，最终使用者较为方便。
+
+ 2 与 1、3、4 的本质区别是：它在第一次 subscribe 前就可以修改 input
+
  */
 
 @interface NSObject (Query)
