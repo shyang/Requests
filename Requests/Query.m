@@ -42,7 +42,7 @@
 
 - (RACSignal *)send {
     // RACSignal body 包含的操作越多，其被 re-subscribe 时，重复执行的操作也越多
-    RACSignal *signal = [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
+    return [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
         AFHTTPSessionManager *manager = self.manager ?: [AFHTTPSessionManager manager];
 
         // 潜在 bug 风险：serializer 类型不匹配时被自动修正，会丢失之前的配置！
@@ -93,10 +93,11 @@
         void (^ok)(NSURLSessionDataTask *, id) = ^(NSURLSessionDataTask *task, id responseObject) {
             self.responseObject = responseObject;
             self.response = task.response;
-            [subscriber sendNext:responseObject];
+            [subscriber sendNext:RACTuplePack(responseObject, self)];
             [subscriber sendCompleted];
         };
         void (^err)(NSURLSessionDataTask *, NSError *) = ^(NSURLSessionDataTask *task, NSError *error) {
+            error.query = self;
             [subscriber sendError:error];
         };
 
@@ -126,9 +127,6 @@
             [task cancel];
         }];
     }];
-
-    signal.query = self;
-    return signal;
 }
 
 @end

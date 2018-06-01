@@ -8,7 +8,6 @@
 
 #import "Query.h"
 #import "UIScrollView+Refresh.h"
-#import "NSError+AFNetworking.h"
 
 @implementation UIScrollView (Refresh)
 
@@ -49,12 +48,11 @@
 
     @weakify(self);
     @weakify(command);
-    RACSignal *reduced = [[command.executionSignals concat] scanWithStart:[NSMutableArray array] reduce:^id (NSMutableArray *running, NSArray *next) {
+    RACSignal *reduced = [[command.executionSignals concat] scanWithStart:nil reduce:^id (RACTuple *running, RACTuple *next) {
         @strongify(self);
-        Query *query = input.query;
-        id responseObject = query.responseObject;
-        NSArray *items = next;
-        NSDictionary *cursor = responseObject[0];
+        NSArray *items = next.first;
+        Query *query = next.second;
+        NSDictionary *cursor = query.responseObject[0];
         int page = [cursor[@"page"] intValue];
         int pages = [cursor[@"pages"] intValue];
         if (page < pages) {
@@ -73,8 +71,11 @@
             [self.mj_footer endRefreshingWithNoMoreData];
         }
 
-        [running addObjectsFromArray:items];
-        return running;
+        if (running) {
+            [running.first addObjectsFromArray:items];
+            return running;
+        }
+        return RACTuplePack([NSMutableArray arrayWithArray:items], next.second);
     }];
 
     output(reduced, command.errors);

@@ -60,7 +60,7 @@ typedef NS_ENUM(NSInteger, ResponseType) {
 @property (nonatomic) NSString *listKey;
 
 #pragma mark - The Use Part 使用对象
-- (RACSignal *)send;
+- (RACSignal<RACTwoTuple<id, Query *> *> *)send;
 
 #pragma mark - Output
 @property (nonatomic) id responseObject; // 原始的输出，未经过 manager.interceptor 的处理
