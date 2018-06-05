@@ -18,7 +18,7 @@
  values 或 errors，对它们 subscribe 不会触发 input。
  */
 
-- (RACTwoTuple<RACSignal *, RACSignal *> *)showHeader:(RACSignal *)input;
-- (RACTwoTuple<RACSignal *, RACSignal *> *)showHeaderAndFooter:(RACSignal *)input;
+- (void)showHeader:(RACSignal *)input output:(void (^)(RACSignal *values, RACSignal *errors))output;
+- (void)showHeaderAndFooter:(RACSignal *)input output:(void (^)(RACSignal *values, RACSignal *errors))output;
 
 @end

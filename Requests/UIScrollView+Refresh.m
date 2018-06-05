@@ -13,7 +13,7 @@
 @implementation UIScrollView (Refresh)
 
 // RACCommand 隐藏于实现内部
-- (RACCommand *)_showHeader:(RACSignal *)input {
+- (RACCommand *)showHeader:(RACSignal *)input {
     __block Query *query = nil;
 
     @weakify(self);
@@ -45,13 +45,13 @@
     return command;
 }
 
-- (RACTwoTuple *)showHeader:(RACSignal *)input {
-    RACCommand *command = [self _showHeader:input];
-    return RACTuplePack([command.executionSignals concat], command.errors);
+- (void)showHeader:(RACSignal *)input output:(void (^)(RACSignal *, RACSignal *))output {
+    RACCommand *command = [self showHeader:input];
+    output([command.executionSignals concat], command.errors);
 }
 
-- (RACTwoTuple *)showHeaderAndFooter:(RACSignal *)input {
-    RACCommand *command = [self _showHeader:input];
+- (void)showHeaderAndFooter:(RACSignal *)input output:(void (^)(RACSignal *, RACSignal *))output {
+    RACCommand *command = [self showHeader:input];
 
     @weakify(self);
     @weakify(command);
@@ -85,7 +85,7 @@
         return next;
     }];
 
-    return RACTuplePack(reduced, command.errors);
+    output(reduced, command.errors);
 }
 
 @end
