@@ -16,7 +16,11 @@
 @implementation AppConfig
 
 + (AFHTTPSessionManager *)manager {
-    AFHTTPSessionManager *manager = [[AFHTTPSessionManager alloc] initWithBaseURL:nil];
+    static AFHTTPSessionManager *manager;
+    if (manager) {
+        return manager;
+    }
+    manager = [[AFHTTPSessionManager alloc] initWithBaseURL:nil];
 
     RACSignal *retrySignal = [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
         UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Auth" message:nil preferredStyle:UIAlertControllerStyleAlert];
