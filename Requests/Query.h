@@ -59,7 +59,13 @@ typedef NS_ENUM(NSInteger, ResponseType) {
 @property (nonatomic) Class modelClass;
 @property (nonatomic) NSString *listKey;
 
++ (instancetype)create:(void (^)(Query *q))config;
+
 #pragma mark - The Use Part 使用对象
 - (RACSignal *)send;
+
+#pragma mark - The Output (上一次) subscribe 后的结果
+@property (nonatomic) id responseObject;
+@property (nonatomic) NSURLResponse *response;
 
 @end

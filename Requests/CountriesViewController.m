@@ -9,6 +9,7 @@
 #import "CountriesViewController.h"
 #import "Country.h"
 #import "UIScrollView+Refresh.h"
+#import "Query.h"
 
 @interface CountriesViewController ()
 
@@ -34,11 +35,11 @@
     // 一次性的数据设置：包括第一次加载
     @weakify(self);
     [self.tableView showHeaderAndFooter:[Country getAllContries] output:^(RACSignal *values, RACSignal *errors) {
-        [values subscribeNext:^(RACTuple *x) {
+        [values subscribeNext:^(Query *x) {
             @strongify(self)
             // 根据数据调整UI
-            self.items = x.first;
-            NSLog(@"%@", x.second);
+            self.items = x.responseObject[1];
+            NSLog(@"%@", x.responseObject[0]);
             [self.tableView reloadData];
         }];
         [errors subscribeNext:^(id x) {

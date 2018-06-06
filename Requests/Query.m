@@ -7,6 +7,8 @@
 //
 
 #import "Query.h"
+#import "NSError+AFNetworking.h"
+#import "AFHTTPSessionManager+RACSignal.h"
 
 @interface Query ()
 
@@ -29,7 +31,7 @@
 }
 
 - (void)dealloc {
-    NSLog(@"dealloc %@", self);
+    NSLog(@"dealloc %@", [super description]);
 }
 
 - (void (^)(void (^)(id<AFMultipartFormData>)))multipartBody {
@@ -37,6 +39,14 @@
         NSAssert(self.method == POST, @"POST only!");
         self.block = block;
     };
+}
+
++ (instancetype)create:(void (^)(Query *))config {
+    Query *q = [self new];
+    if (config) {
+        config(q);
+    }
+    return q;
 }
 
 - (RACSignal *)send {
@@ -90,10 +100,18 @@
         }];
 
         void (^ok)(NSURLSessionDataTask *, id) = ^(NSURLSessionDataTask *task, NSObject *responseObject) {
-            [subscriber sendNext:RACTuplePack(responseObject, task.response)];
+            if (manager.transformResponse) {
+                self.responseObject = manager.transformResponse(self, responseObject);
+            } else {
+                self.responseObject = responseObject;
+            }
+            self.response = task.response;
+
+            [subscriber sendNext:self];
             [subscriber sendCompleted];
         };
         void (^err)(NSURLSessionDataTask *, NSError *) = ^(NSURLSessionDataTask *task, NSError *error) {
+            error.query = self;
             [subscriber sendError:error];
         };
 
@@ -123,6 +141,10 @@
             [task cancel];
         }];
     }];
+}
+
+- (NSString *)description {
+    return [NSString stringWithFormat:@"<%@: %p> %@", [self class], self, @[_responseObject, _response]];
 }
 
 @end

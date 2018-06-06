@@ -17,7 +17,7 @@
 }
 
 + (RACSignal *)getAllContries {
-    return [[AppConfig manager] GET:@"http://api.worldbank.org/v2/countries" parameters:@{@"format": @"json", @"per_page": @"100"} listKey:nil modelClass:self];
+    return [[AppConfig manager] GET:@"http://api.worldbank.org/v2/countries" parameters:@{@"format": @"json", @"per_page": @"100"} listKey:@"[1]" modelClass:self];
 }
 
 @end

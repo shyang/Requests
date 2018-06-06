@@ -41,39 +41,50 @@
         return nil;
     }];
 
-    manager.interceptor = ^RACSignal *(Query *input, RACSignal *output) {
-        return [[[output materialize] flattenMap:^(RACEvent *event) {
+    manager.interceptor = ^RACSignal *(RACSignal *output) {
+        return [[output materialize] flattenMap:^(RACEvent *event) {
             // 全局认证
             NSHTTPURLResponse *response = (NSHTTPURLResponse *)event.error.response;
             if (event.eventType == RACEventTypeError && response.statusCode == 401) {
                 return [retrySignal flattenMap:^RACSignal *(id value) {
                     // 成功登录后，再试一次刚才的请求。
                     if ([value count]) {
-                        [input.headers addEntriesFromDictionary:value];
+                        [event.error.query.headers addEntriesFromDictionary:value];
                         return output;
                     }
                     return [RACSignal error:event.error];
                 }];
             }
             return [[RACSignal return:event] dematerialize];
-        }] flattenMap:^RACSignal *(RACTuple *x) {
-            // 全局解析
-            if (input.modelClass) {
-                NSArray *value = x.first;
-                NSArray *cursor = value[0];
-                NSArray *list = value[1];
-
-                NSError *error = nil;
-                NSArray *objects = [MTLJSONAdapter modelsOfClass:input.modelClass fromJSONArray:list error:&error];
-                if (error) {
-                    return [RACSignal error:error];
-                }
-
-                // 分页拼接时需要 cursor、修改 input
-                return [RACSignal return:RACTuplePack(objects, cursor, input)];
-            }
-            return [RACSignal return:x];
         }];
+    };
+
+    manager.transformResponse = ^id (Query *query, id responseObject) {
+        // 全局解析
+        if (query.modelClass) {
+            NSArray *cursor = responseObject[0];
+            NSArray *items = responseObject[1];
+
+            NSError *error = nil;
+            NSArray *objects = [MTLJSONAdapter modelsOfClass:query.modelClass fromJSONArray:items error:&error];
+            if (error) {
+                return [RACSignal error:error];
+            }
+            responseObject = @[cursor, objects];
+        }
+
+        // 全局拼接
+        if (!query.listKey || !query.responseObject) {
+            return responseObject;
+        }
+
+        id last = query.responseObject;
+        NSDictionary *cursor = responseObject[0];
+        if ([last[0][@"page"] intValue] + 1 == [cursor[@"page"] intValue]) {
+            [last[1] addObjectsFromArray:responseObject[1]];
+            return @[cursor, last[1]];
+        }
+        return responseObject;
     };
 
     return manager;

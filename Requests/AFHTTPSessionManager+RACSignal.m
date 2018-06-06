@@ -16,20 +16,33 @@
     Query *query = [Query new];
     query.method = method;
     query.urlPath = urlPath;
-    query.manager = self;
     if (config) {
         config(query);
     }
-    return self.interceptor ? self.interceptor(query, [query send]) : [query send];
+    return [self send:query];
+}
+
+- (RACSignal *)send:(Query *)query {
+    query.manager = self;
+    return self.interceptor ? self.interceptor([query send]) : [query send];
 }
 
 static void *kInterceptorKey;
-- (RACSignal *(^)(Query *, RACSignal *))interceptor {
+- (RACSignal *(^)(RACSignal *))interceptor {
     return objc_getAssociatedObject(self, &kInterceptorKey);
 }
 
-- (void)setInterceptor:(RACSignal *(^)(Query *, RACSignal *))interceptor {
-    objc_setAssociatedObject(self, &kInterceptorKey, interceptor, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+- (void)setInterceptor:(RACSignal *(^)(RACSignal *))interceptor {
+    objc_setAssociatedObject(self, &kInterceptorKey, interceptor, OBJC_ASSOCIATION_COPY);
+}
+
+static void *kTransformResponseKey;
+- (id (^)(Query *, id))transformResponse {
+    return objc_getAssociatedObject(self, &kTransformResponseKey);
+}
+
+- (void)setTransformResponse:(id (^)(Query *, id))transformResponse {
+    objc_setAssociatedObject(self, &kTransformResponseKey, transformResponse, OBJC_ASSOCIATION_COPY);
 }
 
 #pragma mark -

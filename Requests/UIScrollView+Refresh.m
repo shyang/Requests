@@ -13,13 +13,13 @@
 @implementation UIScrollView (Refresh)
 
 // RACCommand 隐藏于实现内部
-- (RACCommand *)showHeader:(RACSignal *)input {
+- (RACCommand *)showHeader:(RACSignal *)inputSignal {
     __block Query *query = nil;
     @weakify(self);
-    RACCommand *command = [[RACCommand alloc] initWithSignalBlock:^RACSignal *(id x) {
+    RACCommand *command = [[RACCommand alloc] initWithSignalBlock:^RACSignal *(id input) {
         @strongify(self);
-        return [[input takeUntil:self.rac_willDeallocSignal] doNext:^(RACTuple *x) {
-            query = x.third;
+        return [[inputSignal takeUntil:self.rac_willDeallocSignal] doNext:^(Query *x) {
+            query = x;
         }];
     }];
 
@@ -54,11 +54,10 @@
 
     @weakify(self);
     @weakify(command);
-    RACSignal *reduced = [[command.executionSignals concat] scanWithStart:nil reduce:^id (RACTuple *running, RACTuple *next) {
+    RACSignal *reduced = [[command.executionSignals concat] doNext:^(Query *next) {
         @strongify(self);
-        NSArray *items = next.first;
-        NSDictionary *cursor = next.second;
-        Query *query = next.third;
+        NSDictionary *cursor = next.responseObject[0];
+
         int page = [cursor[@"page"] intValue];
         int pages = [cursor[@"pages"] intValue];
         if (page < pages) {
@@ -70,19 +69,13 @@
 
             self.mj_footer.refreshingBlock =^{
                 @strongify(command);
-                query.parameters[@"page"] = @(page + 1);
+                next.parameters[@"page"] = @(page + 1);
                 [command execute:nil];
             };
 
         } else {
             [self.mj_footer endRefreshingWithNoMoreData];
         }
-
-        if (page > 1) {
-            [running.first addObjectsFromArray:items];
-            return RACTuplePack(running.first, cursor, query);
-        }
-        return next;
     }];
 
     output(reduced, command.errors);

@@ -13,6 +13,16 @@
 
 @implementation NSError (AFNetworking)
 
+static int kQueryKey;
+
+- (Query *)query {
+    return objc_getAssociatedObject(self, &kQueryKey);
+}
+
+- (void)setQuery:(Query *)query {
+    objc_setAssociatedObject(self, &kQueryKey, query, OBJC_ASSOCIATION_RETAIN);
+}
+
 - (NSURLResponse *)response {
     return self.userInfo[AFNetworkingOperationFailingURLResponseErrorKey];
 }

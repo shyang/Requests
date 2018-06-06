@@ -15,13 +15,17 @@
 /*
  RACSignal Protocol:
 
- (responseObject, response) completed | error
+ query completed | error
 
- responseObject         json/image/data
- response               NSURLResponse
+ query                      Query
+ query.responseObject       json/image/data
+ query.response             NSURLResponse
+?query.request              NSURLRequest?
 
- error                  error
- error.response         NSURLResponse
+ error                      NSError
+ error.response             NSURLResponse
+ error.query                Query
+?error.request              NSURLRequest?
 
  interceptor 能获取全部信息，进行过滤、解析、拼接等操作后，提供给业务层简单的 responseObject | error
  */
@@ -46,7 +50,12 @@
 - (RACSignal *)PUT:(NSString *)urlPath config:(void (^)(Query *q))config;
 - (RACSignal *)DELETE:(NSString *)urlPath config:(void (^)(Query *q))config;
 
+- (RACSignal *)send:(Query *)query;
+
 // 每个 manager 一个 interceptor，供其发出的所有请求共享
-@property (nonatomic) RACSignal *(^interceptor)(Query *input, RACSignal *output);
+@property (nonatomic) RACSignal *(^interceptor)(RACSignal *output);
+
+// `transformResponse` allows changes to the response data to be made before it is passed to sendNext/sendError
+@property (nonatomic) id (^transformResponse)(Query *query, id responseObject);
 
 @end
