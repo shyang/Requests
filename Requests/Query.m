@@ -14,7 +14,6 @@
 
 @property (nonatomic) NSMutableDictionary *parameters;
 @property (nonatomic) NSMutableDictionary *headers;
-@property (nonatomic) void (^block)(id<AFMultipartFormData>);
 
 @end
 
@@ -32,13 +31,6 @@
 
 - (void)dealloc {
     NSLog(@"dealloc %@", [super description]);
-}
-
-- (void (^)(void (^)(id<AFMultipartFormData>)))multipartBody {
-    return ^(void (^block)(id<AFMultipartFormData>)) {
-        NSAssert(self.method == POST, @"POST only!");
-        self.block = block;
-    };
 }
 
 + (instancetype)create:(void (^)(Query *))config {
@@ -62,7 +54,7 @@
         // Request Part
         if (self.jsonBody) {
             NSAssert([NSJSONSerialization isValidJSONObject:self.jsonBody], @"must be NSArray or NSDictionary!");
-            NSAssert(self.block == nil, @"不应设置 multipart");
+            NSAssert(self.multipartBody == nil, @"不应设置 multipart");
             NSAssert(self.parameters.count == 0, @"无视此处参数！");
 
             if (![manager.requestSerializer isKindOfClass:[AFJSONRequestSerializer class]]) {
@@ -121,8 +113,8 @@
                 task = [manager GET:self.urlPath parameters:self.parameters progress:nil success:ok failure:err];
                 break;
             case POST:
-                if (self.block) {
-                    task = [manager POST:self.urlPath parameters:self.parameters constructingBodyWithBlock:self.block progress:nil success:ok failure:err];
+                if (self.multipartBody) {
+                    task = [manager POST:self.urlPath parameters:self.parameters constructingBodyWithBlock:self.multipartBody progress:nil success:ok failure:err];
                 } else if (self.jsonBody) {
                     task = [manager POST:self.urlPath parameters:self.jsonBody progress:nil success:ok failure:err];
                 } else {

@@ -49,7 +49,7 @@ typedef NS_ENUM(NSInteger, ResponseType) {
 
 @property (nonatomic, readonly) NSMutableDictionary *headers; // default: {}
 @property (nonatomic, readonly) NSMutableDictionary *parameters; // default: {}
-@property (nonatomic, readonly) void (^multipartBody)(void (^)(id<AFMultipartFormData> formData));
+@property (nonatomic) void (^multipartBody)(id<AFMultipartFormData> formData);
 @property (nonatomic) id jsonBody;
 
 @property (nonatomic) ResponseType responseType; // default: JSON

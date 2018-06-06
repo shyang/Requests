@@ -113,7 +113,7 @@ static void *kTransformResponseKey;
 - (RACSignal *)POST:(NSString *)urlPath parameters:(NSDictionary *)parameters constructingBodyWithBlock:(void (^)(id<AFMultipartFormData>))block {
     return [self requst:POST urlPath:urlPath config:^(Query *q) {
         [q.parameters addEntriesFromDictionary:parameters];
-        q.multipartBody(block);
+        q.multipartBody = block;
     }];
 }
 

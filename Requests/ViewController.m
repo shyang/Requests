@@ -56,11 +56,11 @@
         @[@"POST multipart/form-data", ^{
             [[manager POST:@"http://httpbin.org/post" config:^(Query *q) {
                 [q.parameters addEntriesFromDictionary:@{@"3": @"bb", @"4": @"dd"}];
-                q.multipartBody(^(id<AFMultipartFormData> formData) {
+                q.multipartBody = ^(id<AFMultipartFormData> formData) {
                     NSURL *url = [[NSBundle mainBundle] URLForResource:@"Info" withExtension:@"plist"];
                     NSData *d = [NSData dataWithContentsOfURL:url];
                     [formData appendPartWithFormData:d name:@"m3"];
-                });
+                };
             }] subscribeNext:^(id x) {
                 NSLog(@"ok: %@", x);
             } error:^(NSError *error) {
