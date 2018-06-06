@@ -1,5 +1,5 @@
 //
-//  NSError+Shortcut.m
+//  NSError+AFNetworking.m
 //  Requests
 //
 //  Created by shaohua on 2018/5/24.
@@ -7,25 +7,11 @@
 //
 
 #import <objc/runtime.h>
+#import <AFNetworking/AFNetworking.h>
 
 #import "NSError+AFNetworking.h"
 
-@implementation NSObject (Query)
-
-static int kQueryKey;
-
-- (Query *)query {
-    return objc_getAssociatedObject(self, &kQueryKey);
-}
-
-- (void)setQuery:(Query *)query {
-    objc_setAssociatedObject(self, &kQueryKey, query, OBJC_ASSOCIATION_RETAIN);
-}
-
-@end
-
-
-@implementation NSError (Query)
+@implementation NSError (AFNetworking)
 
 - (NSURLResponse *)response {
     return self.userInfo[AFNetworkingOperationFailingURLResponseErrorKey];

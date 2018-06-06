@@ -15,12 +15,11 @@
 // RACCommand 隐藏于实现内部
 - (RACCommand *)showHeader:(RACSignal *)input {
     __block Query *query = nil;
-
     @weakify(self);
     RACCommand *command = [[RACCommand alloc] initWithSignalBlock:^RACSignal *(id x) {
         @strongify(self);
-        return [[input takeUntil:self.rac_willDeallocSignal] doNext:^(NSObject *x) {
-            query = x.query;
+        return [[input takeUntil:self.rac_willDeallocSignal] doNext:^(RACTuple *x) {
+            query = x.third;
         }];
     }];
 
@@ -55,11 +54,11 @@
 
     @weakify(self);
     @weakify(command);
-    RACSignal *reduced = [[command.executionSignals concat] scanWithStart:[NSMutableArray array] reduce:^id (NSMutableArray *running, NSArray *next) {
+    RACSignal *reduced = [[command.executionSignals concat] scanWithStart:nil reduce:^id (RACTuple *running, RACTuple *next) {
         @strongify(self);
-        NSArray *items = next;
-        Query *query = next.query;
-        NSDictionary *cursor = query.responseObject[0];
+        NSArray *items = next.first;
+        NSDictionary *cursor = next.second;
+        Query *query = next.third;
         int page = [cursor[@"page"] intValue];
         int pages = [cursor[@"pages"] intValue];
         if (page < pages) {
@@ -74,13 +73,14 @@
                 query.parameters[@"page"] = @(page + 1);
                 [command execute:nil];
             };
+
         } else {
             [self.mj_footer endRefreshingWithNoMoreData];
         }
 
-        if (query.parameters[@"page"]) {
-            [running addObjectsFromArray:items];
-            return running;
+        if (page > 1) {
+            [running.first addObjectsFromArray:items];
+            return RACTuplePack(running.first, cursor, query);
         }
         return next;
     }];

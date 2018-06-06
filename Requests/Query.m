@@ -7,7 +7,6 @@
 //
 
 #import "Query.h"
-#import "NSError+AFNetworking.h"
 
 @interface Query ()
 
@@ -91,14 +90,10 @@
         }];
 
         void (^ok)(NSURLSessionDataTask *, id) = ^(NSURLSessionDataTask *task, NSObject *responseObject) {
-            self.response = task.response;
-            responseObject.query = self;
-            // self.responseObject = responseObject; // 循环引用，故只在变换后启用
-            [subscriber sendNext:responseObject];
+            [subscriber sendNext:RACTuplePack(responseObject, task.response)];
             [subscriber sendCompleted];
         };
         void (^err)(NSURLSessionDataTask *, NSError *) = ^(NSURLSessionDataTask *task, NSError *error) {
-            error.query = self;
             [subscriber sendError:error];
         };
 

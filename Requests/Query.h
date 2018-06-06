@@ -62,8 +62,4 @@ typedef NS_ENUM(NSInteger, ResponseType) {
 #pragma mark - The Use Part 使用对象
 - (RACSignal *)send;
 
-#pragma mark - Output
-@property (nonatomic) id responseObject; // 原始的输出，未经过 manager.interceptor 的处理
-@property (nonatomic) NSURLResponse *response;
-
 @end

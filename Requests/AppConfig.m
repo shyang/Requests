@@ -41,42 +41,38 @@
         return nil;
     }];
 
-    manager.interceptor = ^RACSignal *(RACSignal *output) {
+    manager.interceptor = ^RACSignal *(Query *input, RACSignal *output) {
         return [[[output materialize] flattenMap:^(RACEvent *event) {
             // 全局认证
             NSHTTPURLResponse *response = (NSHTTPURLResponse *)event.error.response;
             if (event.eventType == RACEventTypeError && response.statusCode == 401) {
-                Query *query = event.error.query;
                 return [retrySignal flattenMap:^RACSignal *(id value) {
                     // 成功登录后，再试一次刚才的请求。
                     if ([value count]) {
-                        [query.headers addEntriesFromDictionary:value];
+                        [input.headers addEntriesFromDictionary:value];
                         return output;
                     }
                     return [RACSignal error:event.error];
                 }];
             }
             return [[RACSignal return:event] dematerialize];
-        }] flattenMap:^RACSignal *(NSArray *value) {
+        }] flattenMap:^RACSignal *(RACTuple *x) {
             // 全局解析
-            Query *query = value.query;
-            if (query.modelClass) {
+            if (input.modelClass) {
+                NSArray *value = x.first;
+                NSArray *cursor = value[0];
                 NSArray *list = value[1];
 
                 NSError *error = nil;
-                NSArray *objects = [MTLJSONAdapter modelsOfClass:query.modelClass fromJSONArray:list error:&error];
+                NSArray *objects = [MTLJSONAdapter modelsOfClass:input.modelClass fromJSONArray:list error:&error];
                 if (error) {
-                    error.query = query;
                     return [RACSignal error:error];
                 }
 
-                // transfer
-                query.responseObject = value;
-                objects.query = query;
-                value.query = nil;
-                return [RACSignal return:objects];
+                // 分页拼接时需要 cursor、修改 input
+                return [RACSignal return:RACTuplePack(objects, cursor, input)];
             }
-            return [RACSignal return:value];
+            return [RACSignal return:x];
         }];
     };
 

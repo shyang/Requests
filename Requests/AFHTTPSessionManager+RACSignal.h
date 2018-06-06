@@ -15,10 +15,15 @@
 /*
  RACSignal Protocol:
 
- value completed | error
+ (responseObject, response) completed | error
 
- value.query.responseObject 变换前的 value，缺省 nil
- value.query.response       NSURLResponse
+ responseObject         json/image/data
+ response               NSURLResponse
+
+ error                  error
+ error.response         NSURLResponse
+
+ interceptor 能获取全部信息，进行过滤、解析、拼接等操作后，提供给业务层简单的 responseObject | error
  */
 
 // 兼容老接口
@@ -42,6 +47,6 @@
 - (RACSignal *)DELETE:(NSString *)urlPath config:(void (^)(Query *q))config;
 
 // 每个 manager 一个 interceptor，供其发出的所有请求共享
-@property (nonatomic) RACSignal *(^interceptor)(RACSignal *output);
+@property (nonatomic) RACSignal *(^interceptor)(Query *input, RACSignal *output);
 
 @end
