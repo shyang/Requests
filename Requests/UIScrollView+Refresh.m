@@ -18,8 +18,8 @@
     @weakify(self);
     RACCommand *command = [[RACCommand alloc] initWithSignalBlock:^RACSignal *(id input) {
         @strongify(self);
-        return [[inputSignal takeUntil:self.rac_willDeallocSignal] doNext:^(Query *x) {
-            query = x;
+        return [[inputSignal takeUntil:self.rac_willDeallocSignal] doNext:^(NSArray *x) {
+            query = x[2]; // [cursor, items, query]
         }];
     }];
 
@@ -54,9 +54,9 @@
 
     @weakify(self);
     @weakify(command);
-    RACSignal *reduced = [[command.executionSignals concat] doNext:^(Query *next) {
+    RACSignal *reduced = [[command.executionSignals concat] doNext:^(NSArray *next) {
         @strongify(self);
-        NSDictionary *cursor = next.responseObject[0];
+        NSDictionary *cursor = next[0];
 
         int page = [cursor[@"page"] intValue];
         int pages = [cursor[@"pages"] intValue];
@@ -69,7 +69,8 @@
 
             self.mj_footer.refreshingBlock =^{
                 @strongify(command);
-                next.parameters[@"page"] = @(page + 1);
+                Query *query = next[2];
+                query.parameters[@"page"] = @(page + 1);
                 [command execute:nil];
             };
 

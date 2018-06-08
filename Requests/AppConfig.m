@@ -42,7 +42,7 @@
     }];
 
     manager.interceptor = ^RACSignal *(RACSignal *output) {
-        return [[output materialize] flattenMap:^(RACEvent *event) {
+        return [[[output materialize] flattenMap:^(RACEvent *event) {
             // 全局认证
             NSHTTPURLResponse *response = (NSHTTPURLResponse *)event.error.response;
             if (event.eventType == RACEventTypeError && response.statusCode == 401) {
@@ -56,6 +56,14 @@
                 }];
             }
             return [[RACSignal return:event] dematerialize];
+        }] map:^id (Query *value) {
+            if (value.listKey) { // 支持分页需要原始的 Query
+                NSArray *original = value.responseObject;
+                NSMutableArray *result = [NSMutableArray arrayWithArray:original]; // 解除循环引用
+                [result addObject:value];
+                return result;
+            };
+            return value.responseObject; // 绝大部分调用只关心解析后的结果
         }];
     };
 

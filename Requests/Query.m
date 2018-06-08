@@ -30,7 +30,7 @@
 }
 
 - (void)dealloc {
-    NSLog(@"dealloc %@", [super description]);
+    NSLog(@"dealloc %@", self);
 }
 
 - (RACSignal *)send {
@@ -125,10 +125,6 @@
             [task cancel];
         }];
     }];
-}
-
-- (NSString *)description {
-    return [NSString stringWithFormat:@"<%@: %p> %@", [self class], self, @[_responseObject, _response]];
 }
 
 @end
