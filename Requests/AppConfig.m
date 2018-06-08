@@ -20,7 +20,9 @@
     if (manager) {
         return manager;
     }
-    manager = [[AFHTTPSessionManager alloc] initWithBaseURL:nil];
+    NSURLSessionConfiguration *conf = [NSURLSessionConfiguration defaultSessionConfiguration];
+    conf.requestCachePolicy = NSURLRequestReloadRevalidatingCacheData;
+    manager = [[AFHTTPSessionManager alloc] initWithBaseURL:nil sessionConfiguration:conf];
 
     RACSignal *retrySignal = [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
         UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Auth" message:nil preferredStyle:UIAlertControllerStyleAlert];

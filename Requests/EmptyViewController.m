@@ -19,6 +19,11 @@
     [super viewDidLoad];
 
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Next" style:UIBarButtonItemStylePlain target:self action:@selector(onNext)];
+
+    NSURLCache *sharedCache = [[NSURLCache alloc] initWithMemoryCapacity:32 * 1024 * 1024
+                                                            diskCapacity:64 * 1024 * 1024
+                                                                diskPath:nil];
+    [NSURLCache setSharedURLCache:sharedCache];
 }
 
 - (void)onNext {

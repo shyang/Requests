@@ -122,7 +122,7 @@
             }];
         }],
         @[@"GET Image body", ^{
-            [[manager GET:@"https://httpbin.org/image/jpeg" config:^(Query *q) {
+            [[manager GET:@"http://httpbin.org/image/jpeg" config:^(Query *q) {
                 q.responseType = ResponseTypeImage;
             }] subscribeNext:^(id x) {
                 NSLog(@"ok: %@", x);
@@ -131,7 +131,7 @@
             }];
         }],
         @[@"GET Blob body", ^{
-            [[manager GET:@"https://httpbin.org/image/png" config:^(Query *q) {
+            [[manager GET:@"http://httpbin.org/image/png" config:^(Query *q) {
                 q.responseType = ResponseTypeRaw;
             }] subscribeNext:^(id x) {
                 NSLog(@"ok: %@", x);
@@ -139,6 +139,13 @@
                 NSLog(@"err: %@", error);
             }];
         }],
+        @[@"Etag & Last-Modified", ^{
+            [[manager GET:@"http://httpbin.org/cache" parameters:nil] subscribeNext:^(id x) {
+                NSLog(@"%@", x);
+            } error:^(NSError *error) {
+                NSLog(@"%@", error);
+            }];
+        }]
     ];
     [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:NSStringFromClass([UITableViewCell class])];
 }
