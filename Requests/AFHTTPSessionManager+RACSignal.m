@@ -27,6 +27,7 @@
     return self.interceptor ? self.interceptor([query send]) : [query send];
 }
 
+#pragma mark - extra properties
 static void *kInterceptorKey;
 - (RACSignal *(^)(RACSignal *))interceptor {
     return objc_getAssociatedObject(self, &kInterceptorKey);
@@ -47,19 +48,19 @@ static void *kTransformResponseKey;
 
 #pragma mark -
 - (RACSignal *)GET:(NSString *)urlPath config:(void (^)(Query *))config {
-    return [self requst:GET urlPath:urlPath config:config];
+    return [self requst:HttpMethodGet urlPath:urlPath config:config];
 }
 
 - (RACSignal *)POST:(NSString *)urlPath config:(void (^)(Query *))config {
-    return [self requst:POST urlPath:urlPath config:config];
+    return [self requst:HttpMethodPost urlPath:urlPath config:config];
 }
 
 - (RACSignal *)PUT:(NSString *)urlPath config:(void (^)(Query *))config {
-    return [self requst:PUT urlPath:urlPath config:config];
+    return [self requst:HttpMethodPut urlPath:urlPath config:config];
 }
 
 - (RACSignal *)DELETE:(NSString *)urlPath config:(void (^)(Query *))config {
-    return [self requst:DELETE urlPath:urlPath config:config];
+    return [self requst:HttpMethodDelete urlPath:urlPath config:config];
 }
 
 #pragma mark - Legacy
@@ -70,19 +71,19 @@ static void *kTransformResponseKey;
 }
 
 - (RACSignal *)GET:(NSString *)urlPath parameters:(NSDictionary *)parameters {
-    return [self requst:GET urlPath:urlPath parameters:parameters];
+    return [self requst:HttpMethodGet urlPath:urlPath parameters:parameters];
 }
 
 - (RACSignal *)POST:(NSString *)urlPath parameters:(NSDictionary *)parameters {
-    return [self requst:POST urlPath:urlPath parameters:parameters];
+    return [self requst:HttpMethodPost urlPath:urlPath parameters:parameters];
 }
 
 - (RACSignal *)PUT:(NSString *)urlPath parameters:(NSDictionary *)parameters {
-    return [self requst:PUT urlPath:urlPath parameters:parameters];
+    return [self requst:HttpMethodPut urlPath:urlPath parameters:parameters];
 }
 
 - (RACSignal *)DELETE:(NSString *)urlPath parameters:(NSDictionary *)parameters {
-    return [self requst:DELETE urlPath:urlPath parameters:parameters];
+    return [self requst:HttpMethodDelete urlPath:urlPath parameters:parameters];
 }
 
 #pragma mark - Legacy
@@ -95,23 +96,23 @@ static void *kTransformResponseKey;
 }
 
 - (RACSignal *)GET:(NSString *)urlPath parameters:(NSDictionary *)parameters listKey:(NSString *)listKey modelClass:(Class)modelClass {
-    return [self requst:GET urlPath:urlPath parameters:parameters listKey:listKey modelClass:modelClass];
+    return [self requst:HttpMethodGet urlPath:urlPath parameters:parameters listKey:listKey modelClass:modelClass];
 }
 
 - (RACSignal *)GET:(NSString *)urlPath parameters:(NSDictionary *)parameters listKey:(NSString *)listKey {
-    return [self requst:GET urlPath:urlPath parameters:parameters listKey:listKey modelClass:nil];
+    return [self requst:HttpMethodGet urlPath:urlPath parameters:parameters listKey:listKey modelClass:nil];
 }
 
 - (RACSignal *)POST:(NSString *)urlPath parameters:(NSDictionary *)parameters listKey:(NSString *)listKey modelClass:(Class)modelClass {
-    return [self requst:POST urlPath:urlPath parameters:parameters listKey:listKey modelClass:modelClass];
+    return [self requst:HttpMethodPost urlPath:urlPath parameters:parameters listKey:listKey modelClass:modelClass];
 }
 
 - (RACSignal *)POST:(NSString *)urlPath parameters:(NSDictionary *)parameters listKey:(NSString *)listKey {
-    return [self requst:POST urlPath:urlPath parameters:parameters listKey:listKey modelClass:nil];
+    return [self requst:HttpMethodPost urlPath:urlPath parameters:parameters listKey:listKey modelClass:nil];
 }
 
 - (RACSignal *)POST:(NSString *)urlPath parameters:(NSDictionary *)parameters constructingBodyWithBlock:(void (^)(id<AFMultipartFormData>))block {
-    return [self requst:POST urlPath:urlPath config:^(Query *q) {
+    return [self requst:HttpMethodPost urlPath:urlPath config:^(Query *q) {
         [q.parameters addEntriesFromDictionary:parameters];
         q.multipartBody = block;
     }];

@@ -123,7 +123,7 @@
         }],
         @[@"GET Image body", ^{
             [[manager GET:@"https://httpbin.org/image/jpeg" config:^(Query *q) {
-                q.responseType = IMAGE;
+                q.responseType = ResponseTypeImage;
             }] subscribeNext:^(id x) {
                 NSLog(@"ok: %@", x);
             } error:^(NSError *error) {
@@ -132,7 +132,7 @@
         }],
         @[@"GET Blob body", ^{
             [[manager GET:@"https://httpbin.org/image/png" config:^(Query *q) {
-                q.responseType = RAW;
+                q.responseType = ResponseTypeRaw;
             }] subscribeNext:^(id x) {
                 NSLog(@"ok: %@", x);
             } error:^(NSError *error) {

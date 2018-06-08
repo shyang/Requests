@@ -21,24 +21,16 @@
 
 - (instancetype)init {
     if (self = [super init]) {
-        _method = GET;
+        _method = HttpMethodGet;
         _parameters = [NSMutableDictionary new];
         _headers = [NSMutableDictionary new];
-        _responseType = JSON;
+        _responseType = ResponseTypeJSON;
     }
     return self;
 }
 
 - (void)dealloc {
     NSLog(@"dealloc %@", [super description]);
-}
-
-+ (instancetype)create:(void (^)(Query *))config {
-    Query *q = [self new];
-    if (config) {
-        config(q);
-    }
-    return q;
 }
 
 - (RACSignal *)send {
@@ -68,19 +60,19 @@
 
         // Response Part
         switch (self.responseType) {
-        case JSON:
+        case ResponseTypeJSON:
             if (![manager.responseSerializer isKindOfClass:[AFJSONResponseSerializer class]]) {
                 AFJSONResponseSerializer *serializer = [AFJSONResponseSerializer serializerWithReadingOptions:NSJSONReadingMutableContainers];
                 serializer.removesKeysWithNullValues = YES;
                 manager.responseSerializer = serializer;
             }
             break;
-        case IMAGE:
+        case ResponseTypeImage:
             if (![manager.responseSerializer isKindOfClass:[AFImageResponseSerializer class]]) {
                 manager.responseSerializer = [AFImageResponseSerializer serializer];
             }
             break;
-        case RAW:
+        case ResponseTypeRaw:
             if (![manager.responseSerializer isMemberOfClass:[AFHTTPResponseSerializer class]]) {
                 manager.responseSerializer = [AFHTTPResponseSerializer serializer];
             }
@@ -109,10 +101,10 @@
 
         NSURLSessionDataTask *task = nil;
         switch (self.method) {
-            case GET:
+            case HttpMethodGet:
                 task = [manager GET:self.urlPath parameters:self.parameters progress:nil success:ok failure:err];
                 break;
-            case POST:
+            case HttpMethodPost:
                 if (self.multipartBody) {
                     task = [manager POST:self.urlPath parameters:self.parameters constructingBodyWithBlock:self.multipartBody progress:nil success:ok failure:err];
                 } else if (self.jsonBody) {
@@ -121,10 +113,10 @@
                     task = [manager POST:self.urlPath parameters:self.parameters progress:nil success:ok failure:err];
                 }
                 break;
-            case PUT:
+            case HttpMethodPut:
                 task = [manager PUT:self.urlPath parameters:self.jsonBody success:ok failure:err];
                 break;
-            case DELETE:
+            case HttpMethodDelete:
                 task = [manager DELETE:self.urlPath parameters:self.parameters success:ok failure:err];
                 break;
         }

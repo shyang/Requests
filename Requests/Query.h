@@ -13,16 +13,16 @@
 // Query 是一个 value object，封装了一个 request 的所有输入 & 原始的输出
 
 typedef NS_ENUM(NSInteger, HttpMethod) {
-    GET,
-    POST,
-    PUT,
-    DELETE,
+    HttpMethodGet,
+    HttpMethodPost,
+    HttpMethodPut,
+    HttpMethodDelete,
 };
 
 typedef NS_ENUM(NSInteger, ResponseType) {
-    JSON, // id: NSDictionary or NSArray
-    IMAGE, // UIImage
-    RAW, // NSData
+    ResponseTypeJSON, // id: NSDictionary or NSArray
+    ResponseTypeImage, // UIImage
+    ResponseTypeRaw, // NSData
 };
 
 /*
@@ -58,8 +58,6 @@ typedef NS_ENUM(NSInteger, ResponseType) {
 // store only
 @property (nonatomic) Class modelClass;
 @property (nonatomic) NSString *listKey;
-
-+ (instancetype)create:(void (^)(Query *q))config;
 
 #pragma mark - The Use Part 使用对象
 - (RACSignal *)send;
