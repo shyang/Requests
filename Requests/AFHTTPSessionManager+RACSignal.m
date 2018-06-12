@@ -118,4 +118,14 @@ static void *kTransformResponseKey;
     }];
 }
 
+- (id)copyWithZone:(NSZone *)zone {
+    AFHTTPSessionManager *HTTPClient = [[[self class] allocWithZone:zone] initWithBaseURL:self.baseURL sessionConfiguration:self.session.configuration];
+
+    HTTPClient.requestSerializer = [self.requestSerializer copyWithZone:zone];
+    HTTPClient.responseSerializer = [self.responseSerializer copyWithZone:zone];
+    HTTPClient.securityPolicy = [self.securityPolicy copyWithZone:zone];
+    HTTPClient.interceptor = self.interceptor;
+    return HTTPClient;
+}
+
 @end

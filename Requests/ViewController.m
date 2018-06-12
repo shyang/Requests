@@ -30,15 +30,12 @@
     AFHTTPSessionManager *manager = [AppConfig manager];
     AFHTTPSessionManager *imageMgr = [manager copy];
     imageMgr.responseSerializer = [AFImageResponseSerializer serializer];
-    imageMgr.interceptor = manager.interceptor;
 
     AFHTTPSessionManager *rawMgr = [manager copy];
     rawMgr.responseSerializer = [AFHTTPResponseSerializer serializer];
-    rawMgr.interceptor = manager.interceptor;
 
     AFHTTPSessionManager *jsonMgr = [manager copy];
     jsonMgr.requestSerializer = [AFJSONRequestSerializer serializer];
-    jsonMgr.interceptor = manager.interceptor;
 
     @weakify(self);
     _items = @[
