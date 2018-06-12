@@ -66,7 +66,7 @@ typedef NS_ENUM(NSInteger, HttpMethod) {
 
 @property (nonatomic) AFHTTPSessionManager *manager; // default: [AFHTTPSessionManager manager]
 
-// store only
+// store only, 在 manager.{interceptor,transformResponse} 中自行解析
 @property (nonatomic) Class modelClass;
 @property (nonatomic) NSString *listKey;
 

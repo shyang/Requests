@@ -55,7 +55,7 @@
 // 每个 manager 一个 interceptor，供其发出的所有请求共享
 @property (nonatomic) RACSignal *(^interceptor)(RACSignal *output);
 
-// `transformResponse` allows changes to the response data to be made before it is passed to sendNext/sendError
+// `transformResponse` allows changes to the response data to be made before it is passed to sendNext
 @property (nonatomic) id (^transformResponse)(Query *query, id responseObject);
 
 @end
