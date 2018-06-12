@@ -24,7 +24,6 @@
         _method = HttpMethodGet;
         _parameters = [NSMutableDictionary new];
         _headers = [NSMutableDictionary new];
-        _responseType = ResponseTypeJSON;
     }
     return self;
 }
@@ -38,44 +37,16 @@
     return [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
         AFHTTPSessionManager *manager = self.manager ?: [AFHTTPSessionManager manager];
 
-        // 潜在 bug 风险：serializer 类型不匹配时被自动修正，会丢失之前的配置！
-        // 故若对 serializer 有定制，请生成并使用多个 manager！
-
         // 注意 isKindOfClass: 与 isMemberOfClass: 的区别
-
         // Request Part
         if (self.jsonBody) {
             NSAssert([NSJSONSerialization isValidJSONObject:self.jsonBody], @"must be NSArray or NSDictionary!");
             NSAssert(self.multipartBody == nil, @"不应设置 multipart");
             NSAssert(self.parameters.count == 0, @"无视此处参数！");
 
-            if (![manager.requestSerializer isKindOfClass:[AFJSONRequestSerializer class]]) {
-                manager.requestSerializer = [AFJSONRequestSerializer serializer];
-            }
+            NSAssert([manager.requestSerializer isKindOfClass:[AFJSONRequestSerializer class]], @"serializer 不匹配");
         } else {
-            if (![manager.requestSerializer isMemberOfClass:[AFHTTPRequestSerializer class]]) {
-                manager.requestSerializer = [AFHTTPRequestSerializer serializer];
-            }
-        }
-
-        // Response Part
-        switch (self.responseType) {
-        case ResponseTypeJSON:
-            if (![manager.responseSerializer isKindOfClass:[AFJSONResponseSerializer class]]) {
-                AFJSONResponseSerializer *serializer = [AFJSONResponseSerializer serializerWithReadingOptions:NSJSONReadingMutableContainers];
-                serializer.removesKeysWithNullValues = YES;
-                manager.responseSerializer = serializer;
-            }
-            break;
-        case ResponseTypeImage:
-            if (![manager.responseSerializer isKindOfClass:[AFImageResponseSerializer class]]) {
-                manager.responseSerializer = [AFImageResponseSerializer serializer];
-            }
-            break;
-        case ResponseTypeRaw:
-            if (![manager.responseSerializer isMemberOfClass:[AFHTTPResponseSerializer class]]) {
-                manager.responseSerializer = [AFHTTPResponseSerializer serializer];
-            }
+            NSAssert([manager.requestSerializer isMemberOfClass:[AFHTTPRequestSerializer class]], @"serializer 不匹配");
         }
 
         // Headers

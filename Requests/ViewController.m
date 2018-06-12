@@ -28,6 +28,17 @@
     [super viewDidLoad];
 
     AFHTTPSessionManager *manager = [AppConfig manager];
+    AFHTTPSessionManager *imageMgr = [manager copy];
+    imageMgr.responseSerializer = [AFImageResponseSerializer serializer];
+    imageMgr.interceptor = manager.interceptor;
+
+    AFHTTPSessionManager *rawMgr = [manager copy];
+    rawMgr.responseSerializer = [AFHTTPResponseSerializer serializer];
+    rawMgr.interceptor = manager.interceptor;
+
+    AFHTTPSessionManager *jsonMgr = [manager copy];
+    jsonMgr.requestSerializer = [AFJSONRequestSerializer serializer];
+    jsonMgr.interceptor = manager.interceptor;
 
     @weakify(self);
     _items = @[
@@ -68,7 +79,7 @@
             }];
         }],
         @[@"POST application/json", ^{
-            [[manager POST:@"http://httpbin.org/post" config:^(Query *q) {
+            [[jsonMgr POST:@"http://httpbin.org/post" config:^(Query *q) {
                 q.jsonBody = @{@"5": @"bb", @"6": @"dd"};
             }] subscribeNext:^(id x) {
                 NSLog(@"ok: %@", x);
@@ -86,7 +97,7 @@
             }];
         }],
         @[@"PUT application/json", ^{
-            [[manager PUT:@"http://httpbin.org/put" config:^(Query *q) {
+            [[jsonMgr PUT:@"http://httpbin.org/put" config:^(Query *q) {
                 q.jsonBody = @{@"9": @"bb", @"10": @"dd"};
             }] subscribeNext:^(id x) {
                 NSLog(@"ok: %@", x);
@@ -122,18 +133,14 @@
             }];
         }],
         @[@"GET Image body", ^{
-            [[manager GET:@"http://httpbin.org/image/jpeg" config:^(Query *q) {
-                q.responseType = ResponseTypeImage;
-            }] subscribeNext:^(id x) {
+            [[imageMgr GET:@"http://httpbin.org/image/jpeg" config:nil] subscribeNext:^(id x) {
                 NSLog(@"ok: %@", x);
             } error:^(NSError *error) {
                 NSLog(@"err: %@", error);
             }];
         }],
         @[@"GET Blob body", ^{
-            [[manager GET:@"http://httpbin.org/image/png" config:^(Query *q) {
-                q.responseType = ResponseTypeRaw;
-            }] subscribeNext:^(id x) {
+            [[rawMgr GET:@"http://httpbin.org/image/png" config:nil] subscribeNext:^(id x) {
                 NSLog(@"ok: %@", x);
             } error:^(NSError *error) {
                 NSLog(@"err: %@", error);

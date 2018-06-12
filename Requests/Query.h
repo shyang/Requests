@@ -10,7 +10,7 @@
 #import <Foundation/Foundation.h>
 #import <ReactiveObjC/ReactiveObjC.h>
 
-// Query 是一个 value object，封装了一个 request 的所有输入 & 原始的输出
+// Query 是一个 value object，封装了一个 network request 的所有输入 & 原始的输出
 
 typedef NS_ENUM(NSInteger, HttpMethod) {
     HttpMethodGet,
@@ -19,26 +19,38 @@ typedef NS_ENUM(NSInteger, HttpMethod) {
     HttpMethodDelete,
 };
 
-typedef NS_ENUM(NSInteger, ResponseType) {
-    ResponseTypeJSON, // id: NSDictionary or NSArray
-    ResponseTypeImage, // UIImage
-    ResponseTypeRaw, // NSData
-};
-
 /*
- GET POST PUT DELETE 可与 Content-Type 任意组合，但实际会做限制：
+ 一、GET POST PUT DELETE 可与 Content-Type 任意组合，但实际做了如下限制：
 
- GET DELETE 只支持 parameters，编码在 URL 之中，不允许 jsonBody 或 multipartBody
+ 1. GET DELETE 只支持 parameters，编码在 URL 之中，不允许 jsonBody 或 multipartBody
 
- PUT 只支持 jsonBody，不允许 multipartBody 或 parameters
+ 2. PUT 只支持 jsonBody，不允许 multipartBody 或 parameters
 
- POST 支持：
- * jsonBody (application/json)
- * parameters (application/x-www-form-urlencoded)
- * parameters + multipartBody (multipart/form-data)
+ 3. POST 支持：
+    * jsonBody (application/json)
+    * parameters (application/x-www-form-urlencoded)
+    * parameters + multipartBody (multipart/form-data)
 
  总结：jsonBody、parameters、multipartBody 互斥，除了 POST multipart 下后两者可共存
 
+ 二、输入格式
+ * jsonBody
+ manager.requestSerializer = [AFJSONRequestSerializer serializer];
+
+ * parameters and/or multipartBody
+ manager.requestSerializer = [AFHTTPRequestSerializer serializer];
+
+ 三、输出格式
+ * responseObject: NSDictionary 或 NSArray
+ manager.responseSerializer = [AFJSONResponseSerializer serializer];
+
+ * responseObject: UIImage
+ manager.responseSerializer = [AFImageResponseSerializer serializer];
+
+ * responseObject: NSData
+ manager.responseSerializer = [AFHTTPResponseSerializer serializer];
+
+ 总结：若对 serializer 有定制，请生成并使用多个 manager！它们创建后应 immutable！
  */
 @interface Query : NSObject
 
@@ -52,7 +64,6 @@ typedef NS_ENUM(NSInteger, ResponseType) {
 @property (nonatomic) void (^multipartBody)(id<AFMultipartFormData> formData);
 @property (nonatomic) id jsonBody;
 
-@property (nonatomic) ResponseType responseType; // default: JSON
 @property (nonatomic) AFHTTPSessionManager *manager; // default: [AFHTTPSessionManager manager]
 
 // store only
