@@ -46,6 +46,15 @@ static void *kTransformResponseKey;
     objc_setAssociatedObject(self, &kTransformResponseKey, transformResponse, OBJC_ASSOCIATION_COPY);
 }
 
+static void *kTransformRequestKey;
+- (Query *(^)(Query *))transformRequest {
+    return objc_getAssociatedObject(self, &kTransformRequestKey);
+}
+
+- (void)setTransformRequest:(Query *(^)(Query *))transformRequest {
+    objc_setAssociatedObject(self, &kTransformRequestKey, transformRequest, OBJC_ASSOCIATION_COPY);
+}
+
 #pragma mark -
 - (RACSignal *)GET:(NSString *)urlPath config:(void (^)(Query *))config {
     return [self requst:HttpMethodGet urlPath:urlPath config:config];
@@ -124,7 +133,11 @@ static void *kTransformResponseKey;
     HTTPClient.requestSerializer = [self.requestSerializer copyWithZone:zone];
     HTTPClient.responseSerializer = [self.responseSerializer copyWithZone:zone];
     HTTPClient.securityPolicy = [self.securityPolicy copyWithZone:zone];
+
+    // copy associated properties
     HTTPClient.interceptor = self.interceptor;
+    HTTPClient.transformResponse = self.transformResponse;
+    HTTPClient.transformRequest = self.transformRequest;
     return HTTPClient;
 }
 

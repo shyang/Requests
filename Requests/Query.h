@@ -62,7 +62,7 @@ typedef NS_ENUM(NSInteger, HttpMethod) {
 @property (nonatomic, readonly) NSMutableDictionary *headers; // default: {}
 @property (nonatomic, readonly) NSMutableDictionary *parameters; // default: {}
 @property (nonatomic) void (^multipartBody)(id<AFMultipartFormData> formData);
-@property (nonatomic) id jsonBody;
+@property (nonatomic) id jsonBody; // NSArray or NSDictionary
 
 @property (nonatomic) AFHTTPSessionManager *manager; // default: [AFHTTPSessionManager manager]
 

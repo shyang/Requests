@@ -28,14 +28,14 @@
     return self;
 }
 
-- (void)dealloc {
-    NSLog(@"dealloc %@", self);
-}
-
 - (RACSignal *)send {
     // RACSignal body 包含的操作越多，其被 re-subscribe 时，重复执行的操作也越多
     return [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
         AFHTTPSessionManager *manager = self.manager ?: [AFHTTPSessionManager manager];
+
+        if (manager.transformRequest) {
+            manager.transformRequest(self);
+        }
 
         // 注意 isKindOfClass: 与 isMemberOfClass: 的区别
         // Request Part

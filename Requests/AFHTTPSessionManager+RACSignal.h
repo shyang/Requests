@@ -58,4 +58,7 @@
 // `transformResponse` allows changes to the response data to be made before it is passed to sendNext
 @property (nonatomic) id (^transformResponse)(Query *query, id responseObject);
 
+// `transformRequest` allows changes to the request data before it is sent to the server
+@property (nonatomic) void (^transformRequest)(Query *query);
+
 @end
