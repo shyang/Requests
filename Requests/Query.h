@@ -74,7 +74,7 @@ typedef NS_ENUM(NSInteger, HttpMethod) {
 - (RACSignal *)send;
 
 #pragma mark - The Output (上一次) subscribe 后的结果
-@property (nonatomic) id responseObject;
-@property (nonatomic) NSURLResponse *response;
+@property (nonatomic, readonly) id responseObject;
+@property (nonatomic, readonly) NSURLResponse *response;
 
 @end

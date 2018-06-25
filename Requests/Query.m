@@ -14,6 +14,8 @@
 
 @property (nonatomic) NSMutableDictionary *parameters;
 @property (nonatomic) NSMutableDictionary *headers;
+@property (nonatomic) id responseObject;
+@property (nonatomic) NSURLResponse *response;
 
 @end
 
