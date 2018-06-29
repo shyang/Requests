@@ -57,6 +57,7 @@
         }];
 
         void (^ok)(NSURLSessionDataTask *, id) = ^(NSURLSessionDataTask *task, NSObject *responseObject) {
+            self.responseDate = [NSDate date];
             if (manager.transformResponse) {
                 self.responseObject = manager.transformResponse(self, responseObject);
             } else {
@@ -72,25 +73,26 @@
             [subscriber sendError:error];
         };
 
+        NSString *urlPath = self.baseURL.length == 0 ? self.urlPath : [self.baseURL stringByAppendingString:self.urlPath];
         NSURLSessionDataTask *task = nil;
         switch (self.method) {
             case HttpMethodGet:
-                task = [manager GET:self.urlPath parameters:self.parameters progress:nil success:ok failure:err];
+                task = [manager GET:urlPath parameters:self.parameters progress:nil success:ok failure:err];
                 break;
             case HttpMethodPost:
                 if (self.multipartBody) {
-                    task = [manager POST:self.urlPath parameters:self.parameters constructingBodyWithBlock:self.multipartBody progress:nil success:ok failure:err];
+                    task = [manager POST:urlPath parameters:self.parameters constructingBodyWithBlock:self.multipartBody progress:nil success:ok failure:err];
                 } else if (self.jsonBody) {
-                    task = [manager POST:self.urlPath parameters:self.jsonBody progress:nil success:ok failure:err];
+                    task = [manager POST:urlPath parameters:self.jsonBody progress:nil success:ok failure:err];
                 } else {
-                    task = [manager POST:self.urlPath parameters:self.parameters progress:nil success:ok failure:err];
+                    task = [manager POST:urlPath parameters:self.parameters progress:nil success:ok failure:err];
                 }
                 break;
             case HttpMethodPut:
-                task = [manager PUT:self.urlPath parameters:self.jsonBody success:ok failure:err];
+                task = [manager PUT:urlPath parameters:self.jsonBody success:ok failure:err];
                 break;
             case HttpMethodDelete:
-                task = [manager DELETE:self.urlPath parameters:self.parameters success:ok failure:err];
+                task = [manager DELETE:urlPath parameters:self.parameters success:ok failure:err];
                 break;
         }
 

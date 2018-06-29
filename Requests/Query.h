@@ -57,6 +57,7 @@ typedef NS_ENUM(NSInteger, HttpMethod) {
 #pragma mark - The Builder Part 构造对象
 
 @property (nonatomic) HttpMethod method;
+@property (nonatomic) NSString *baseURL; // 优先级高于 manager.baseURL
 @property (nonatomic) NSString *urlPath;
 
 @property (nonatomic, readonly) NSMutableDictionary *headers; // default: {}
@@ -74,6 +75,7 @@ typedef NS_ENUM(NSInteger, HttpMethod) {
 - (RACSignal *)send;
 
 #pragma mark - The Output (上一次) subscribe 后的结果
+@property (nonatomic) NSDate *responseDate; // 获得结果的时间
 @property (nonatomic, readonly) id responseObject;
 @property (nonatomic, readonly) NSURLResponse *response;
 
