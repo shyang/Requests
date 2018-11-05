@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		9BC486A3A0577E1D7FBA7126 /* libPods-Requests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 09EC8CC6DC978663F59C9C27 /* libPods-Requests.a */; };
 		AD1CB40020B65A7B00D4A28E /* AFHTTPSessionManager+RACSignal.m in Sources */ = {isa = PBXBuildFile; fileRef = AD1CB3FF20B65A7B00D4A28E /* AFHTTPSessionManager+RACSignal.m */; };
 		AD44578F20A545C300D4A28E /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = AD44578E20A545C300D4A28E /* AppDelegate.m */; };
 		AD44579220A545C400D4A28E /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AD44579120A545C300D4A28E /* ViewController.m */; };
@@ -21,10 +20,11 @@
 		AD609CFC20ADFECE0069D159 /* CountriesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AD609CFB20ADFECE0069D159 /* CountriesViewController.m */; };
 		AD609CFF20AE02650069D159 /* EmptyViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AD609CFE20AE02650069D159 /* EmptyViewController.m */; };
 		AD9F94B320B6CE9000D4A28E /* NSError+AFNetworking.m in Sources */ = {isa = PBXBuildFile; fileRef = AD9F94B220B6CE9000D4A28E /* NSError+AFNetworking.m */; };
+		F90E7E357F9A95972E9A28BE /* libPods-Requests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 091CFE8D2DC856FD8336AB46 /* libPods-Requests.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		09EC8CC6DC978663F59C9C27 /* libPods-Requests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Requests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		091CFE8D2DC856FD8336AB46 /* libPods-Requests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Requests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		0F77AB8A32770391DAA9F2C4 /* Pods-Requests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Requests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Requests/Pods-Requests.debug.xcconfig"; sourceTree = "<group>"; };
 		AD1CB3FE20B65A7B00D4A28E /* AFHTTPSessionManager+RACSignal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "AFHTTPSessionManager+RACSignal.h"; sourceTree = "<group>"; };
 		AD1CB3FF20B65A7B00D4A28E /* AFHTTPSessionManager+RACSignal.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "AFHTTPSessionManager+RACSignal.m"; sourceTree = "<group>"; };
@@ -59,7 +59,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9BC486A3A0577E1D7FBA7126 /* libPods-Requests.a in Frameworks */,
+				F90E7E357F9A95972E9A28BE /* libPods-Requests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,7 +78,7 @@
 		993F21852145F30EEAECCDAA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				09EC8CC6DC978663F59C9C27 /* libPods-Requests.a */,
+				091CFE8D2DC856FD8336AB46 /* libPods-Requests.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -143,7 +143,7 @@
 				AD44578620A545C300D4A28E /* Sources */,
 				AD44578720A545C300D4A28E /* Frameworks */,
 				AD44578820A545C300D4A28E /* Resources */,
-				136070AF93A8FF5D17C508C6 /* [CP] Copy Pods Resources */,
+				5088C0C98484AC6F0445B3FB /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -199,24 +199,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		136070AF93A8FF5D17C508C6 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${SRCROOT}/Pods/Target Support Files/Pods-Requests/Pods-Requests-resources.sh",
-				"${PODS_ROOT}/MJRefresh/MJRefresh/MJRefresh.bundle",
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MJRefresh.bundle",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Requests/Pods-Requests-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		34C06817CFC29409EB9D0398 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -233,6 +215,28 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		5088C0C98484AC6F0445B3FB /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-Requests/Pods-Requests-resources.sh",
+				"${PODS_ROOT}/MJRefresh/MJRefresh/MJRefresh.bundle",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MJRefresh.bundle",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Requests/Pods-Requests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
