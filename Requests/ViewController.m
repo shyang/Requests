@@ -163,7 +163,7 @@
             }];
         }],
         @[@"Etag & Last-Modified", ^{
-            [[manager GET:@"http://httpbin.org/cache" parameters:nil] subscribeNext:^(id x) {
+            [[manager GET:@"http://httpbin.org/cache" config:nil] subscribeNext:^(id x) {
                 NSLog(@"%@", x);
             } error:^(NSError *error) {
                 NSLog(@"%@", error);
