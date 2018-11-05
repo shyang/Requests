@@ -39,6 +39,22 @@
             manager.transformRequest(self);
         }
 
+        // 支持路径中的 {key} 参数:
+        NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@"\\{([^}]+)\\}" options:0 error:0];
+        NSString *urlPath = self.urlPath;
+        while (1) {
+            NSTextCheckingResult *match = [regex firstMatchInString:urlPath options:0 range:NSMakeRange(0, urlPath.length)];
+            if (!match) {
+                break;
+            }
+            NSString *key = [urlPath substringWithRange:[match rangeAtIndex:1]]; // "userId"
+            NSString *target = [self.parameters[key] description];
+            NSAssert(target.length, @"param in urlPath is mandatory");
+            urlPath = [urlPath stringByReplacingCharactersInRange:[match rangeAtIndex:0] withString:target]; // "{userId}"
+            [self.parameters removeObjectForKey:key];
+        };
+        // 支持路径中的 {key} 参数: END
+
         // 注意 isKindOfClass: 与 isMemberOfClass: 的区别
         // Request Part
         if (self.jsonBody) {
@@ -73,7 +89,10 @@
             [subscriber sendError:error];
         };
 
-        NSString *urlPath = self.baseURL.length == 0 ? self.urlPath : [self.baseURL stringByAppendingString:self.urlPath];
+        if (self.baseURL.length > 0) {
+            urlPath = [self.baseURL stringByAppendingString:self.urlPath];
+        }
+
         NSURLSessionDataTask *task = nil;
         switch (self.method) {
             case HttpMethodGet:

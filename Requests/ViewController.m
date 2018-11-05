@@ -129,6 +129,15 @@
                 NSLog(@"err: %@", error);
             }];
         }],
+        @[@"GET 499", ^{
+            [[manager GET:@"http://httpbin.org/status/{code}" config:^(Query *q) {
+                q.parameters[@"code"] = @499;
+            }] subscribeNext:^(id x) {
+                NSLog(@"ok: %@", x);
+            } error:^(NSError *error) {
+                NSLog(@"err: %@", error);
+            }];
+        }],
         @[@"GET Image body", ^{
             [[imageMgr GET:@"http://httpbin.org/image/jpeg" config:nil] subscribeNext:^(id x) {
                 NSLog(@"ok: %@", x);

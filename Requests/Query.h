@@ -52,13 +52,15 @@ typedef NS_ENUM(NSInteger, HttpMethod) {
 
  总结：若对 serializer 有定制，请生成并使用多个 manager！它们创建后应 immutable！
  */
+
+// Query 可被继承，其子类的所有属性自动等价于 this.parameters
 @interface Query : NSObject
 
 #pragma mark - The Builder Part 构造对象
 
 @property (nonatomic) HttpMethod method;
-@property (nonatomic) NSString *baseURL; // 优先级高于 manager.baseURL
-@property (nonatomic) NSString *urlPath;
+@property (nonatomic) NSString *baseURL; // 优先级高于 this.manager.baseURL
+@property (nonatomic) NSString *urlPath; // 路径中可包含 {key} 类型的参数，自动从 this.parameters 中替换，如 /users/{userId}
 
 @property (nonatomic, readonly) NSMutableDictionary *headers; // default: {}
 @property (nonatomic, readonly) NSMutableDictionary *parameters; // default: {}
