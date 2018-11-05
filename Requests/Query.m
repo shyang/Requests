@@ -41,17 +41,18 @@
 
         // 支持路径中的 {key} 参数:
         NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@"\\{([^}]+)\\}" options:0 error:0];
-        NSString *urlPath = self.urlPath;
+        NSString *urlPath = self.urlPath; // 修改不影响下次重试
+        NSMutableDictionary *parameters = [self.parameters mutableCopy]; // 删除不影响下次重试
         while (1) {
             NSTextCheckingResult *match = [regex firstMatchInString:urlPath options:0 range:NSMakeRange(0, urlPath.length)];
             if (!match) {
                 break;
             }
             NSString *key = [urlPath substringWithRange:[match rangeAtIndex:1]]; // "userId"
-            NSString *target = [self.parameters[key] description];
+            NSString *target = [parameters[key] description]; // 可以是 NSNumber
             NSAssert(target.length, @"param in urlPath is mandatory");
             urlPath = [urlPath stringByReplacingCharactersInRange:[match rangeAtIndex:0] withString:target]; // "{userId}"
-            [self.parameters removeObjectForKey:key];
+            [parameters removeObjectForKey:key];
         };
         // 支持路径中的 {key} 参数: END
 
@@ -60,7 +61,7 @@
         if (self.jsonBody) {
             NSAssert([NSJSONSerialization isValidJSONObject:self.jsonBody], @"must be NSArray or NSDictionary!");
             NSAssert(self.multipartBody == nil, @"不应设置 multipart");
-            NSAssert(self.parameters.count == 0, @"无视此处参数！");
+            NSAssert(parameters.count == 0, @"无视此处参数！");
 
             NSAssert([manager.requestSerializer isKindOfClass:[AFJSONRequestSerializer class]], @"serializer 不匹配");
         } else {
@@ -96,22 +97,22 @@
         NSURLSessionDataTask *task = nil;
         switch (self.method) {
             case HttpMethodGet:
-                task = [manager GET:urlPath parameters:self.parameters progress:nil success:ok failure:err];
+                task = [manager GET:urlPath parameters:parameters progress:nil success:ok failure:err];
                 break;
             case HttpMethodPost:
                 if (self.multipartBody) {
-                    task = [manager POST:urlPath parameters:self.parameters constructingBodyWithBlock:self.multipartBody progress:nil success:ok failure:err];
+                    task = [manager POST:urlPath parameters:parameters constructingBodyWithBlock:self.multipartBody progress:nil success:ok failure:err];
                 } else if (self.jsonBody) {
                     task = [manager POST:urlPath parameters:self.jsonBody progress:nil success:ok failure:err];
                 } else {
-                    task = [manager POST:urlPath parameters:self.parameters progress:nil success:ok failure:err];
+                    task = [manager POST:urlPath parameters:parameters progress:nil success:ok failure:err];
                 }
                 break;
             case HttpMethodPut:
                 task = [manager PUT:urlPath parameters:self.jsonBody success:ok failure:err];
                 break;
             case HttpMethodDelete:
-                task = [manager DELETE:urlPath parameters:self.parameters success:ok failure:err];
+                task = [manager DELETE:urlPath parameters:parameters success:ok failure:err];
                 break;
         }
 
