@@ -10,6 +10,8 @@
 #import "NSError+AFNetworking.h"
 #import "AFHTTPSessionManager+RACSignal.h"
 
+#import <objc/runtime.h>
+
 @interface Query ()
 
 @property (nonatomic) NSMutableDictionary *parameters;
@@ -30,6 +32,26 @@
     return self;
 }
 
+// 支持子类属性当作参数
+- (NSMutableDictionary *)_parametersFromProperties {
+    if ([self isMemberOfClass:[Query class]]) {
+        return self.parameters;
+    }
+    NSMutableDictionary *parameters = [self.parameters mutableCopy]; // 修改不影响下次重试
+    unsigned count = 0;
+    objc_property_t *properties = class_copyPropertyList([self class], &count);
+
+    for (int i = 0; i < count; ++i) {
+        objc_property_t property = properties[i];
+        const char *name = property_getName(property);
+        const char *attrs = property_getAttributes(property);
+        NSCAssert(attrs[1] == '@', @"type not supported");
+        NSString *key = @(name);
+        parameters[key] = [self valueForKey:key];
+    }
+    return parameters;
+}
+
 - (RACSignal *)send {
     // RACSignal body 包含的操作越多，其被 re-subscribe 时，重复执行的操作也越多
     return [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
@@ -42,7 +64,7 @@
         // 支持路径中的 {key} 参数:
         NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@"\\{([^}]+)\\}" options:0 error:0];
         NSString *urlPath = self.urlPath; // 修改不影响下次重试
-        NSMutableDictionary *parameters = [self.parameters mutableCopy]; // 删除不影响下次重试
+        NSMutableDictionary *parameters = [self _parametersFromProperties];
         while (1) {
             NSTextCheckingResult *match = [regex firstMatchInString:urlPath options:0 range:NSMakeRange(0, urlPath.length)];
             if (!match) {

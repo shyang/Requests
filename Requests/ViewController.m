@@ -11,6 +11,7 @@
 #import "CountriesViewController.h"
 #import "Country.h"
 #import "ViewController.h"
+#import "FooApi.h"
 
 @interface ViewController ()
 
@@ -133,6 +134,15 @@
             [[manager GET:@"http://httpbin.org/status/{code}" config:^(Query *q) {
                 q.parameters[@"code"] = @499;
             }] subscribeNext:^(id x) {
+                NSLog(@"ok: %@", x);
+            } error:^(NSError *error) {
+                NSLog(@"err: %@", error);
+            }];
+        }],
+        @[@"GET 599", ^{
+            FooApi *foo = [FooApi new];
+            foo.userId = @599;
+            [[foo send] subscribeNext:^(id x) {
                 NSLog(@"ok: %@", x);
             } error:^(NSError *error) {
                 NSLog(@"err: %@", error);

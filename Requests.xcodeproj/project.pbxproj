@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		AD09E83521903FED00D4A28E /* FooApi.m in Sources */ = {isa = PBXBuildFile; fileRef = AD09E83421903FED00D4A28E /* FooApi.m */; };
 		AD1CB40020B65A7B00D4A28E /* AFHTTPSessionManager+RACSignal.m in Sources */ = {isa = PBXBuildFile; fileRef = AD1CB3FF20B65A7B00D4A28E /* AFHTTPSessionManager+RACSignal.m */; };
 		AD44578F20A545C300D4A28E /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = AD44578E20A545C300D4A28E /* AppDelegate.m */; };
 		AD44579220A545C400D4A28E /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AD44579120A545C300D4A28E /* ViewController.m */; };
@@ -26,6 +27,8 @@
 /* Begin PBXFileReference section */
 		091CFE8D2DC856FD8336AB46 /* libPods-Requests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Requests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		0F77AB8A32770391DAA9F2C4 /* Pods-Requests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Requests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Requests/Pods-Requests.debug.xcconfig"; sourceTree = "<group>"; };
+		AD09E83321903FED00D4A28E /* FooApi.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FooApi.h; sourceTree = "<group>"; };
+		AD09E83421903FED00D4A28E /* FooApi.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FooApi.m; sourceTree = "<group>"; };
 		AD1CB3FE20B65A7B00D4A28E /* AFHTTPSessionManager+RACSignal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "AFHTTPSessionManager+RACSignal.h"; sourceTree = "<group>"; };
 		AD1CB3FF20B65A7B00D4A28E /* AFHTTPSessionManager+RACSignal.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "AFHTTPSessionManager+RACSignal.m"; sourceTree = "<group>"; };
 		AD44578A20A545C300D4A28E /* Requests.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Requests.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -120,6 +123,8 @@
 				AD609CFB20ADFECE0069D159 /* CountriesViewController.m */,
 				AD44578D20A545C300D4A28E /* AppDelegate.h */,
 				AD44578E20A545C300D4A28E /* AppDelegate.m */,
+				AD09E83321903FED00D4A28E /* FooApi.h */,
+				AD09E83421903FED00D4A28E /* FooApi.m */,
 				AD44579020A545C300D4A28E /* ViewController.h */,
 				AD44579120A545C300D4A28E /* ViewController.m */,
 				AD609CFD20AE02650069D159 /* EmptyViewController.h */,
@@ -255,6 +260,7 @@
 				AD609CED20ADD7030069D159 /* AppConfig.m in Sources */,
 				AD4457A820A5461200D4A28E /* Query.m in Sources */,
 				AD609CF920ADFC500069D159 /* Country.m in Sources */,
+				AD09E83521903FED00D4A28E /* FooApi.m in Sources */,
 				AD1CB40020B65A7B00D4A28E /* AFHTTPSessionManager+RACSignal.m in Sources */,
 				AD44578F20A545C300D4A28E /* AppDelegate.m in Sources */,
 			);
