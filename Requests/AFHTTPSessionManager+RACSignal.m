@@ -47,11 +47,11 @@ static void *kTransformResponseKey;
 }
 
 static void *kTransformRequestKey;
-- (Query *(^)(Query *))transformRequest {
+- (void (^)(Query *))transformRequest {
     return objc_getAssociatedObject(self, &kTransformRequestKey);
 }
 
-- (void)setTransformRequest:(Query *(^)(Query *))transformRequest {
+- (void)setTransformRequest:(void (^)(Query *))transformRequest {
     objc_setAssociatedObject(self, &kTransformRequestKey, transformRequest, OBJC_ASSOCIATION_COPY);
 }
 
