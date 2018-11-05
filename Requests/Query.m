@@ -23,13 +23,18 @@
 
 @implementation Query
 
-- (instancetype)init {
+- (instancetype)initWithUrlPath:(NSString *)urlPath {
     if (self = [super init]) {
         _method = HttpMethodGet;
         _parameters = [NSMutableDictionary new];
         _headers = [NSMutableDictionary new];
+        _urlPath = urlPath;
     }
     return self;
+}
+
+- (instancetype)init {
+    return [self initWithUrlPath:nil];
 }
 
 // 支持子类属性当作参数

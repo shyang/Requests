@@ -17,8 +17,7 @@
 }
 
 + (RACSignal *)getAllContries {
-    Query *q = [Query new];
-    q.urlPath = @"http://api.worldbank.org/v2/countries";
+    Query *q = [[Query alloc] initWithUrlPath:@"http://api.worldbank.org/v2/countries"];
     [q.parameters addEntriesFromDictionary:@{@"format": @"json", @"per_page": @"100"}];
     q.modelClass = self;
     q.listKey = @"[1]";

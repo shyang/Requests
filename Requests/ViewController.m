@@ -130,7 +130,7 @@
                 NSLog(@"err: %@", error);
             }];
         }],
-        @[@"GET 499", ^{
+        @[@"GET 499, URL 路径中参数", ^{
             [[manager GET:@"http://httpbin.org/status/{code}" config:^(Query *q) {
                 q.parameters[@"code"] = @499;
             }] subscribeNext:^(id x) {
@@ -139,7 +139,7 @@
                 NSLog(@"err: %@", error);
             }];
         }],
-        @[@"GET 599", ^{
+        @[@"GET 599 子类的属性作为参数", ^{
             FooApi *foo = [FooApi new];
             foo.userId = @599;
             [[foo send] subscribeNext:^(id x) {
