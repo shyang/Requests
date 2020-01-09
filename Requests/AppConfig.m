@@ -48,48 +48,39 @@
             // 全局认证
             NSHTTPURLResponse *response = (NSHTTPURLResponse *)event.error.response;
             if (event.eventType == RACEventTypeError && response.statusCode == 401) {
-                return [retrySignal flattenMap:^RACSignal *(id value) {
+                return [retrySignal flattenMap:^RACSignal *(NSDictionary *value) {
                     // 成功登录后，再试一次刚才的请求。
-                    if ([value count]) {
-                        [event.error.query.headers addEntriesFromDictionary:value];
+                    if ([value count]) { // 搜索 demo:demo
+                        [event.error.afnQuery.headers addEntriesFromDictionary:value];
                         return output;
                     }
                     return [RACSignal error:event.error];
                 }];
             }
             return [[RACSignal return:event] dematerialize];
-        }] flattenMap:^RACSignal *(Query *value) {
-            NSArray *x = value.responseObject;
+        }] flattenMap:^RACSignal *(id x) {
             // 全局解析
-            if (value.modelClass) {
+            Query *query = [x afnQuery];
+            if (query.modelClass) {
+                // 该后台返回的是数组
                 NSArray *cursor = x[0];
                 NSArray *items = x[1];
 
                 NSError *error = nil;
-                NSArray *objects = [MTLJSONAdapter modelsOfClass:value.modelClass fromJSONArray:items error:&error];
+                NSArray *objects = [MTLJSONAdapter modelsOfClass:query.modelClass fromJSONArray:items error:&error];
                 if (error) {
                     return [RACSignal error:error];
                 }
-                return [RACSignal return:@[cursor, objects, value]]; // 支持分页需要原始的 Query；注意循环引用
+                query.userInfo = cursor; // 支持分页得保留 cursor 信息
+                objects.afnQuery = query; // 传递 query 供请求下一页，注意循环引用
+                return [RACSignal return:objects]; // 与其它路径一样只输出订阅者关心的数据
             }
             return [RACSignal return:x]; // 绝大部分调用只关心解析后的结果
         }];
     };
 
-    manager.transformResponse = ^id (Query *query, id responseObject) {
-        // 全局拼接
-        if (!query.listKey || !query.responseObject) {
-            return responseObject;
-        }
-
-        id last = query.responseObject;
-        NSDictionary *cursor = responseObject[0];
-        if ([last[0][@"page"] intValue] + 1 == [cursor[@"page"] intValue]) {
-            NSMutableArray *concat = [NSMutableArray array];
-            [concat addObjectsFromArray:last[1]];
-            [concat addObjectsFromArray:responseObject[1]];
-            return @[cursor, concat];
-        }
+    manager.transformResponse = ^id (id responseObject) {
+        // 未做变换
         return responseObject;
     };
 

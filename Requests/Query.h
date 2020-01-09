@@ -78,9 +78,9 @@ typedef NS_ENUM(NSInteger, HttpMethod) {
 #pragma mark - The Use Part 使用对象
 - (RACSignal *)send;
 
-#pragma mark - The Output (上一次) subscribe 后的结果
+#pragma mark - The Output (上一次) subscribe 后的原始结果
 @property (nonatomic) NSDate *responseDate; // 获得结果的时间
-@property (nonatomic, readonly) id responseObject;
 @property (nonatomic, readonly) NSURLResponse *response;
+@property (nonatomic) id userInfo; // 供用户存放额外信息
 
 @end

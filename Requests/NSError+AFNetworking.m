@@ -11,17 +11,21 @@
 
 #import "NSError+AFNetworking.h"
 
-@implementation NSError (AFNetworking)
+@implementation NSObject (AFNetworking)
 
 static int kQueryKey;
 
-- (Query *)query {
+- (Query *)afnQuery {
     return objc_getAssociatedObject(self, &kQueryKey);
 }
 
-- (void)setQuery:(Query *)query {
+- (void)setAfnQuery:(Query *)query {
     objc_setAssociatedObject(self, &kQueryKey, query, OBJC_ASSOCIATION_RETAIN);
 }
+
+@end
+
+@implementation NSError (AFNetworking)
 
 - (NSURLResponse *)response {
     return self.userInfo[AFNetworkingOperationFailingURLResponseErrorKey];

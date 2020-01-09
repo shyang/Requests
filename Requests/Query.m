@@ -102,18 +102,20 @@
 
         void (^ok)(NSURLSessionDataTask *, id) = ^(NSURLSessionDataTask *task, NSObject *responseObject) {
             self.responseDate = [NSDate date];
+            responseObject.afnQuery = self;
             if (manager.transformResponse) {
-                self.responseObject = manager.transformResponse(self, responseObject);
-            } else {
-                self.responseObject = responseObject;
+                responseObject = manager.transformResponse(responseObject);
+                responseObject.afnQuery = self; // 替换时传递
             }
+
             self.response = task.response;
 
-            [subscriber sendNext:self];
+            // 已无外层 Query，让订阅者直接接收到 responseObject
+            [subscriber sendNext:responseObject];
             [subscriber sendCompleted];
         };
         void (^err)(NSURLSessionDataTask *, NSError *) = ^(NSURLSessionDataTask *task, NSError *error) {
-            error.query = self;
+            error.afnQuery = self;
             [subscriber sendError:error];
         };
 

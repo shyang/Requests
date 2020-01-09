@@ -27,9 +27,13 @@
 
  */
 
-@interface NSError (AFNetworking)
+@interface NSObject (AFNetworking)
 
-@property (nonatomic) Query *query; // config of the request that generated this error
+@property (nonatomic) Query *afnQuery; // config of the request that generated this object
+
+@end
+
+@interface NSError (AFNetworking)
 
 @property (nonatomic, readonly) NSURLResponse *response;
 @property (nonatomic, readonly) NSData *responseData;

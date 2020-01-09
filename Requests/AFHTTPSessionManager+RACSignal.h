@@ -56,7 +56,7 @@
 @property (nonatomic) RACSignal *(^interceptor)(RACSignal *output);
 
 // `transformResponse` allows changes to the response data to be made before it is passed to sendNext
-@property (nonatomic) id (^transformResponse)(Query *query, id responseObject);
+@property (nonatomic) id (^transformResponse)(id responseObject);
 
 // `transformRequest` allows changes to the request data before it is sent to the server
 @property (nonatomic) void (^transformRequest)(Query *query);

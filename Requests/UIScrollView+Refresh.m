@@ -14,12 +14,14 @@
 
 // RACCommand 隐藏于实现内部
 - (RACCommand *)showHeader:(RACSignal *)inputSignal {
-    __block Query *query = nil;
+
     @weakify(self);
     RACCommand *command = [[RACCommand alloc] initWithSignalBlock:^RACSignal *(id input) {
         @strongify(self);
         return [[inputSignal takeUntil:self.rac_willDeallocSignal] doNext:^(NSArray *x) {
-            query = x[2]; // [cursor, items, query]
+            // 每次拿到结果时，均 reset 一下分页参数，使每次下拉都是第一页
+            Query *query = [x afnQuery];
+            [query.parameters removeObjectForKey:@"page"]; // reset
         }];
     }];
 
@@ -28,8 +30,6 @@
         self.mj_header = [[MJRefreshNormalHeader alloc] init];
     }
     [self.mj_header setRefreshingBlock:^{
-        [query.parameters removeObjectForKey:@"page"]; // reset
-
         // retain `command`
         [command execute:nil];
     }];
@@ -52,11 +52,13 @@
 - (void)showHeaderAndFooter:(RACSignal *)input output:(void (^)(RACSignal *, RACSignal *))output {
     RACCommand *command = [self showHeader:input];
 
+    // 还原 4ff1c88 之前的做法: scanWithStart:reduce:
     @weakify(self);
     @weakify(command);
-    RACSignal *reduced = [[command.executionSignals concat] doNext:^(NSArray *next) {
+    RACSignal *reduced = [[command.executionSignals concat] scanWithStart:nil reduce:^id (id running, id next) {
         @strongify(self);
-        NSDictionary *cursor = next[0];
+        Query *query = [next afnQuery];
+        NSDictionary *cursor = query.userInfo;
 
         int page = [cursor[@"page"] intValue];
         int pages = [cursor[@"pages"] intValue];
@@ -69,7 +71,6 @@
 
             self.mj_footer.refreshingBlock =^{
                 @strongify(command);
-                Query *query = next[2];
                 query.parameters[@"page"] = @(page + 1);
                 [command execute:nil];
             };
@@ -77,6 +78,12 @@
         } else {
             [self.mj_footer endRefreshingWithNoMoreData];
         }
+
+        if (page > 1) {
+            [running addObjectsFromArray:next];
+            return running;
+        }
+        return next;
     }];
 
     output(reduced, command.errors);

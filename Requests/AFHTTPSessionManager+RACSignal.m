@@ -38,11 +38,11 @@ static void *kInterceptorKey;
 }
 
 static void *kTransformResponseKey;
-- (id (^)(Query *, id))transformResponse {
+- (id (^)(id))transformResponse {
     return objc_getAssociatedObject(self, &kTransformResponseKey);
 }
 
-- (void)setTransformResponse:(id (^)(Query *, id))transformResponse {
+- (void)setTransformResponse:(id (^)(id))transformResponse {
     objc_setAssociatedObject(self, &kTransformResponseKey, transformResponse, OBJC_ASSOCIATION_COPY);
 }
 
